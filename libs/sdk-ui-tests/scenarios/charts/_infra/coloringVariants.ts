@@ -18,16 +18,17 @@ const ConfigVariants: Array<[string, IChartConfig, ScenarioTag[]?]> = [
     ],
 ];
 
-export function coloringCustomizer<T extends IBucketChartProps>(
-    baseName: string,
-    baseProps: UnboundVisProps<T>,
-    baseTags: ScenarioTag[],
-): Array<CustomizedScenario<T>> {
-    return ConfigVariants.map(([variantName, coloringOverlay, tags = []]) => {
-        return [
-            `${baseName} - ${variantName}`,
-            { ...baseProps, config: { ...baseProps.config, ...coloringOverlay } },
-            [...baseTags, ...tags],
-        ];
-    });
-}
+export const coloringCustomizer = () =>
+    function <T extends IBucketChartProps>(
+        baseName: string,
+        baseProps: UnboundVisProps<T>,
+        baseTags: ScenarioTag[],
+    ): Array<CustomizedScenario<T>> {
+        return ConfigVariants.map(([variantName, coloringOverlay, tags = []]) => {
+            return [
+                `${baseName} - ${variantName}`,
+                { ...baseProps, config: { ...baseProps.config, ...coloringOverlay } },
+                [...baseTags, ...tags],
+            ];
+        });
+    };

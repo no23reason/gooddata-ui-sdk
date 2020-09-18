@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<IDonutChartProps>("DonutChart", DonutChart
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("", DonutChartWithSingleMeasureAndViewBy, coloringCustomizer);
+    .addScenarios("", DonutChartWithSingleMeasureAndViewBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IDonutChartProps>("DonutChart", DonutChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

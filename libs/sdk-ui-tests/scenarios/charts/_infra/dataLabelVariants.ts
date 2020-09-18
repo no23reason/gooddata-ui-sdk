@@ -15,14 +15,15 @@ const ConfigVariants: Array<[string, IChartConfig]> = [
     ["forced hidden", { dataLabels: { visible: false } }],
 ];
 
-export function dataLabelCustomizer<T extends IBucketChartProps>(
-    baseName: string,
-    baseProps: UnboundVisProps<T>,
-): Array<CustomizedScenario<T>> {
-    return ConfigVariants.map(([variantName, dataLabelOverlay]) => {
-        return [
-            `${baseName} - ${variantName}`,
-            { ...baseProps, config: { ...baseProps.config, ...dataLabelOverlay } },
-        ];
-    });
-}
+export const dataLabelCustomizer = () =>
+    function <T extends IBucketChartProps>(
+        baseName: string,
+        baseProps: UnboundVisProps<T>,
+    ): Array<CustomizedScenario<T>> {
+        return ConfigVariants.map(([variantName, dataLabelOverlay]) => {
+            return [
+                `${baseName} - ${variantName}`,
+                { ...baseProps, config: { ...baseProps.config, ...dataLabelOverlay } },
+            ];
+        });
+    };

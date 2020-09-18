@@ -18,7 +18,7 @@ const colorsAndPalette = scenariosFor<IBarChartProps>("BarChart", BarChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", BarChartWithTwoMeasuresAndViewBy, coloringCustomizer);
+    .addScenarios("coloring", BarChartWithTwoMeasuresAndViewBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IBarChartProps>("BarChart", BarChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

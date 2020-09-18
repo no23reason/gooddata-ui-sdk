@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<IHeatmapProps>("Heatmap", Heatmap)
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", HeatmapWithMeasureRowsAndColumns, coloringCustomizer);
+    .addScenarios("coloring", HeatmapWithMeasureRowsAndColumns, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IHeatmapProps>("Heatmap", Heatmap)
     .withGroupNames(...ScenarioGroupNames.Coloring)

@@ -9,4 +9,4 @@ export default scenariosFor<IHeatmapProps>("Heatmap", Heatmap)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "axis name configuration" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("axis name configuration", HeatmapWithMeasureRowsAndColumns, axisNameCustomization);
+    .addScenarios("axis name configuration", HeatmapWithMeasureRowsAndColumns, axisNameCustomization());

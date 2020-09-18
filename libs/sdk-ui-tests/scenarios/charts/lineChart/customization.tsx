@@ -10,12 +10,12 @@ const legendScenarios = scenariosFor<ILineChartProps>("LineChart", LineChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position", LineChartTwoMeasuresWithTrendyBy, legendCustomizer);
+    .addScenarios("legend position", LineChartTwoMeasuresWithTrendyBy, legendCustomizer());
 
 const dataLabelScenarios = scenariosFor<ILineChartProps>("LineChart", LineChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", LineChartTwoMeasuresWithTrendyBy, dataLabelCustomizer);
+    .addScenarios("data labels", LineChartTwoMeasuresWithTrendyBy, dataLabelCustomizer());
 
 export default [legendScenarios, dataLabelScenarios];

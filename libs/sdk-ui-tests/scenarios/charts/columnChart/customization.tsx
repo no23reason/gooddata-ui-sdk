@@ -10,12 +10,12 @@ const legendScenarios = scenariosFor<IColumnChartProps>("ColumnChart", ColumnCha
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position", ColumnChartWithTwoMeasuresAndViewBy, legendCustomizer);
+    .addScenarios("legend position", ColumnChartWithTwoMeasuresAndViewBy, legendCustomizer());
 
 const dataLabelScenarios = scenariosFor<IColumnChartProps>("ColumnChart", ColumnChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", ColumnChartWithTwoMeasuresAndViewBy, dataLabelCustomizer);
+    .addScenarios("data labels", ColumnChartWithTwoMeasuresAndViewBy, dataLabelCustomizer());
 
 export default [legendScenarios, dataLabelScenarios];

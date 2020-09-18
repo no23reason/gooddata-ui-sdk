@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<IComboChartProps>("ComboChart", ComboChart
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", ComboChartWithArithmeticMeasuresAndViewBy, coloringCustomizer);
+    .addScenarios("coloring", ComboChartWithArithmeticMeasuresAndViewBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IComboChartProps>("ComboChart", ComboChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

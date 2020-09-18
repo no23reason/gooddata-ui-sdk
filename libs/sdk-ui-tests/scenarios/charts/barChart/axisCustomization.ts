@@ -20,7 +20,7 @@ const singleAxisNameConfig = scenariosFor<IBarChartProps>("BarChart", BarChart)
         screenshotSize: { width: 800, height: 600 },
     })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("single axis name customization", BarChartWithTwoMeasuresAndViewBy, axisNameCustomization);
+    .addScenarios("single axis name customization", BarChartWithTwoMeasuresAndViewBy, axisNameCustomization());
 
 const dualAxisNameConfig = scenariosFor<IBarChartProps>("BarChart", BarChart)
     .withGroupNames(...ScenarioGroupNames.Axes)
@@ -39,7 +39,7 @@ const dualAxisNameConfig = scenariosFor<IBarChartProps>("BarChart", BarChart)
                 },
             },
         },
-        axisNameCustomization,
+        axisNameCustomization(),
     );
 
 const dualAxisLabelRotation = scenariosFor<IBarChartProps>("BarChart", BarChart)
@@ -63,7 +63,7 @@ const dualAxisLabelRotation = scenariosFor<IBarChartProps>("BarChart", BarChart)
                 },
             },
         },
-        axisRotationVariants,
+        axisRotationVariants(),
     );
 
 const axisConfig = scenariosFor<IBarChartProps>("BarChart", BarChart)

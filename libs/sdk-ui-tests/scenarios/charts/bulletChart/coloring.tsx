@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<IBulletChartProps>("BulletChart", BulletCh
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", BulletChartWithAllMeasuresAndViewBy, coloringCustomizer);
+    .addScenarios("coloring", BulletChartWithAllMeasuresAndViewBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IBulletChartProps>("BulletChart", BulletChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

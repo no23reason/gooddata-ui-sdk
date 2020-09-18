@@ -18,7 +18,7 @@ const colorsAndPalette = scenariosFor<IColumnChartProps>("ColumnChart", ColumnCh
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", ColumnChartWithTwoMeasuresAndViewBy, coloringCustomizer);
+    .addScenarios("coloring", ColumnChartWithTwoMeasuresAndViewBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IColumnChartProps>("ColumnChart", ColumnChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

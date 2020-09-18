@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<IPieChartProps>("PieChart", PieChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", PieChartWithSingleMeasureAndViewBy, coloringCustomizer);
+    .addScenarios("coloring", PieChartWithSingleMeasureAndViewBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IPieChartProps>("PieChart", PieChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

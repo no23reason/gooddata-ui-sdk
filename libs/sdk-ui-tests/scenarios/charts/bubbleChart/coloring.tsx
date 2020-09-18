@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<IBubbleChartProps>("BubbleChart", BubbleCh
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", BubbleChartWithAllMeasuresAndAttribute, coloringCustomizer);
+    .addScenarios("coloring", BubbleChartWithAllMeasuresAndAttribute, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IBubbleChartProps>("BubbleChart", BubbleChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

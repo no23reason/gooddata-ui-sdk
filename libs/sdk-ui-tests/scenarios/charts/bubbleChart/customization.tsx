@@ -10,12 +10,12 @@ const legendScenarios = scenariosFor<IBubbleChartProps>("BubbleChart", BubbleCha
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position", BubbleChartWithAllMeasuresAndAttribute, legendCustomizer);
+    .addScenarios("legend position", BubbleChartWithAllMeasuresAndAttribute, legendCustomizer());
 
 const dataLabelScenarios = scenariosFor<IBubbleChartProps>("BubbleChart", BubbleChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", BubbleChartWithAllMeasuresAndAttribute, dataLabelCustomizer);
+    .addScenarios("data labels", BubbleChartWithAllMeasuresAndAttribute, dataLabelCustomizer());
 
 export default [legendScenarios, dataLabelScenarios];

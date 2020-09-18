@@ -1,10 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 
-const commitHash = require("child_process")
-    .execSync("git rev-parse --short HEAD")
-    .toString()
-    .trim();
+const commitHash = require("child_process").execSync("git rev-parse --short HEAD").toString().trim();
 
 /*
  * Our extension of config adds support for typescript. support for CSS loading and SVG & fonts is built into
@@ -30,6 +27,22 @@ module.exports = ({ config, mode }) => {
                 },
             },
         ],
+    });
+
+    config.module.rules.push({
+        test: /\.tsx?$/,
+        include: [
+            path.join(__dirname, "../stories"),
+            path.join(__dirname, "../scenarios"),
+            path.join(__dirname, "../src"),
+        ],
+        loaders: [
+            {
+                loader: require.resolve("@storybook/source-loader"),
+                options: { parser: "typescript" },
+            },
+        ],
+        enforce: "pre",
     });
 
     // DEBUG constant

@@ -10,13 +10,13 @@ const legendScenarios = scenariosFor<IAreaChartProps>("AreaChart", AreaChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position", AreaChartWithTwoMeasuresAndViewBy, legendCustomizer);
+    .addScenarios("legend position", AreaChartWithTwoMeasuresAndViewBy, legendCustomizer());
 
 const dataLabelScenarios = scenariosFor<IAreaChartProps>("AreaChart", AreaChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withGroupNames("customization")
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", AreaChartWithTwoMeasuresAndViewBy, dataLabelCustomizer);
+    .addScenarios("data labels", AreaChartWithTwoMeasuresAndViewBy, dataLabelCustomizer());
 
 export default [legendScenarios, dataLabelScenarios];

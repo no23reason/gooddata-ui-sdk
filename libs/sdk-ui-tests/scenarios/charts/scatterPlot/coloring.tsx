@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<IScatterPlotProps>("ScatterPlot", ScatterP
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", ScatterPlotWithMeasuresAndAttribute, coloringCustomizer);
+    .addScenarios("coloring", ScatterPlotWithMeasuresAndAttribute, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IScatterPlotProps>("ScatterPlot", ScatterPlot)
     .withGroupNames(...ScenarioGroupNames.Coloring)

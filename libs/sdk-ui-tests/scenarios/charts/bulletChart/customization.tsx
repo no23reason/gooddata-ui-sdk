@@ -10,12 +10,12 @@ const legendScenarios = scenariosFor<IBulletChartProps>("BulletChart", BulletCha
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position", BulletChartWithAllMeasuresAndViewBy, legendCustomizer);
+    .addScenarios("legend position", BulletChartWithAllMeasuresAndViewBy, legendCustomizer());
 
 const dataLabelScenarios = scenariosFor<IBulletChartProps>("BulletChart", BulletChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", BulletChartWithAllMeasuresAndViewBy, dataLabelCustomizer);
+    .addScenarios("data labels", BulletChartWithAllMeasuresAndViewBy, dataLabelCustomizer());
 
 export default [legendScenarios, dataLabelScenarios];

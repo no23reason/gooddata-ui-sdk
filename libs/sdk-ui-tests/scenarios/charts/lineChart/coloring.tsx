@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<ILineChartProps>("LineChart", LineChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", LineChartTwoMeasuresWithTrendyBy, coloringCustomizer);
+    .addScenarios("coloring", LineChartTwoMeasuresWithTrendyBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<ILineChartProps>("LineChart", LineChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

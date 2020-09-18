@@ -54,11 +54,15 @@ function merge(original: IChartConfig = {}, axisNames: IChartConfig): IChartConf
     };
 }
 
-export function axisNameCustomization<T extends IBucketChartProps>(
-    baseName: string,
-    baseProps: UnboundVisProps<T>,
-): Array<CustomizedScenario<T>> {
-    return ConfigVariants.map(([variantName, config]) => {
-        return [`${baseName} - ${variantName}`, { ...baseProps, config: merge(baseProps.config, config) }];
-    });
-}
+export const axisNameCustomization = () =>
+    function <T extends IBucketChartProps>(
+        baseName: string,
+        baseProps: UnboundVisProps<T>,
+    ): Array<CustomizedScenario<T>> {
+        return ConfigVariants.map(([variantName, config]) => {
+            return [
+                `${baseName} - ${variantName}`,
+                { ...baseProps, config: merge(baseProps.config, config) },
+            ];
+        });
+    };

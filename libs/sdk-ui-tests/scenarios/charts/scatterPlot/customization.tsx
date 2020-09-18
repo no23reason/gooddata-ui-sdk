@@ -9,6 +9,6 @@ const dataLabelScenarios = scenariosFor<IScatterPlotProps>("ScatterPlot", Scatte
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", ScatterPlotWithMeasuresAndAttribute, dataLabelCustomizer);
+    .addScenarios("data labels", ScatterPlotWithMeasuresAndAttribute, dataLabelCustomizer());
 
 export default [dataLabelScenarios];

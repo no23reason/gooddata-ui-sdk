@@ -10,12 +10,12 @@ const legendScenarios = scenariosFor<IBarChartProps>("BarChart", BarChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position", BarChartWithTwoMeasuresAndViewBy, legendCustomizer);
+    .addScenarios("legend position", BarChartWithTwoMeasuresAndViewBy, legendCustomizer());
 
 const dataLabelScenarios = scenariosFor<IBarChartProps>("BarChart", BarChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", BarChartWithTwoMeasuresAndViewBy, dataLabelCustomizer);
+    .addScenarios("data labels", BarChartWithTwoMeasuresAndViewBy, dataLabelCustomizer());
 
 export default [legendScenarios, dataLabelScenarios];

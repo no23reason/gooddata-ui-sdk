@@ -22,7 +22,7 @@ const singleAxisNameConfig = scenariosFor<IColumnChartProps>("ColumnChart", Colu
     .addScenarios(
         "single axis name customization",
         ColumnChartWithTwoMeasuresAndViewBy,
-        axisNameCustomization,
+        axisNameCustomization(),
     );
 
 const dualAxisNameConfig = scenariosFor<IColumnChartProps>("ColumnChart", ColumnChart)
@@ -42,7 +42,7 @@ const dualAxisNameConfig = scenariosFor<IColumnChartProps>("ColumnChart", Column
                 },
             },
         },
-        axisNameCustomization,
+        axisNameCustomization(),
     );
 
 const axisConfig = scenariosFor<IColumnChartProps>("ColumnChart", ColumnChart)

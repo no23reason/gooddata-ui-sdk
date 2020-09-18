@@ -11,23 +11,23 @@ const legendScenarios = scenariosFor<IPieChartProps>("PieChart", PieChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position - two measures", PieChartWithTwoMeasures, legendCustomizer)
+    .addScenarios("legend position - two measures", PieChartWithTwoMeasures, legendCustomizer())
     .addScenarios(
         "legend position - single measure and viewBy",
         PieChartWithSingleMeasureAndViewBy,
-        legendCustomizer,
+        legendCustomizer(),
     );
 
 const dataLabelScenarios = scenariosFor<IPieChartProps>("PieChart", PieChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", PieChartWithSingleMeasureAndViewBy, dataLabelCustomizer);
+    .addScenarios("data labels", PieChartWithSingleMeasureAndViewBy, dataLabelCustomizer());
 
 const chartAlignmentScenarios = scenariosFor<IPieChartProps>("PieChart", PieChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "alignment", screenshotSize: { width: 400, height: 600 } })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("vertical alignment", PieChartWithSingleMeasureAndViewBy, chartAlignmentVariants);
+    .addScenarios("vertical alignment", PieChartWithSingleMeasureAndViewBy, chartAlignmentVariants());
 
 export default [legendScenarios, dataLabelScenarios, chartAlignmentScenarios];

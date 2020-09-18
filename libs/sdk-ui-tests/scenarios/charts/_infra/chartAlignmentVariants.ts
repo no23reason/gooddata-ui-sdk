@@ -9,11 +9,12 @@ const ConfigVariants: Array<[string, IChartConfig]> = [
     ["default", {}],
 ];
 
-export function chartAlignmentVariants<T extends IBucketChartProps>(
-    baseName: string,
-    baseProps: UnboundVisProps<T>,
-): Array<CustomizedScenario<T>> {
-    return ConfigVariants.map(([variantName, config]) => {
-        return [`${baseName} - ${variantName}`, { ...baseProps, config }];
-    });
-}
+export const chartAlignmentVariants = () =>
+    function <T extends IBucketChartProps>(
+        baseName: string,
+        baseProps: UnboundVisProps<T>,
+    ): Array<CustomizedScenario<T>> {
+        return ConfigVariants.map(([variantName, config]) => {
+            return [`${baseName} - ${variantName}`, { ...baseProps, config }];
+        });
+    };

@@ -28,6 +28,6 @@ const axisNameScenarios = scenariosFor<IScatterPlotProps>("ScatterPlot", Scatter
     .withGroupNames(...ScenarioGroupNames.Axes)
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
     .withVisualTestConfig({ groupUnder: "axis name configuration" })
-    .addScenarios("axis name configuration", ScatterPlotWithMeasuresAndAttribute, axisNameCustomization);
+    .addScenarios("axis name configuration", ScatterPlotWithMeasuresAndAttribute, axisNameCustomization());
 
 export default [axisConfig, axisNameScenarios];

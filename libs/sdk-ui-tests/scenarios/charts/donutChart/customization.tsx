@@ -11,23 +11,23 @@ const legendScenarios = scenariosFor<IDonutChartProps>("DonutChart", DonutChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position - two measures", DonutChartWithTwoMeasures, legendCustomizer)
+    .addScenarios("legend position - two measures", DonutChartWithTwoMeasures, legendCustomizer())
     .addScenarios(
         "legend position - single measure and viewBy",
         DonutChartWithSingleMeasureAndViewBy,
-        legendCustomizer,
+        legendCustomizer(),
     );
 
 const dataLabelScenarios = scenariosFor<IDonutChartProps>("DonutChart", DonutChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", DonutChartWithSingleMeasureAndViewBy, dataLabelCustomizer);
+    .addScenarios("data labels", DonutChartWithSingleMeasureAndViewBy, dataLabelCustomizer());
 
 const chartAlignmentScenarios = scenariosFor<IDonutChartProps>("DonutChart", DonutChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "alignment", screenshotSize: { width: 400, height: 600 } })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("vertical alignment", DonutChartWithSingleMeasureAndViewBy, chartAlignmentVariants);
+    .addScenarios("vertical alignment", DonutChartWithSingleMeasureAndViewBy, chartAlignmentVariants());
 
 export default [legendScenarios, dataLabelScenarios, chartAlignmentScenarios];

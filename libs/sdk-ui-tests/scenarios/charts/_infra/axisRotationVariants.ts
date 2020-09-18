@@ -19,18 +19,19 @@ function updateAxisSettings(rotation: string, config: IChartConfig = {}): IChart
     return copy;
 }
 
-export function axisRotationVariants<T extends IBucketChartProps>(
-    baseName: string,
-    baseProps: UnboundVisProps<T>,
-): Array<CustomizedScenario<T>> {
-    return ConfigVariants.map(([rotation]) => {
-        /*
-         * stories use the scenario name as story name. the minus sign messes things up and would lead
-         * to duplicate stories..
-         */
-        return [
-            `${baseName} - ${rotation.replace("-", "minus")}`,
-            { ...baseProps, config: updateAxisSettings(rotation, baseProps.config) },
-        ];
-    });
-}
+export const axisRotationVariants = () =>
+    function <T extends IBucketChartProps>(
+        baseName: string,
+        baseProps: UnboundVisProps<T>,
+    ): Array<CustomizedScenario<T>> {
+        return ConfigVariants.map(([rotation]) => {
+            /*
+             * stories use the scenario name as story name. the minus sign messes things up and would lead
+             * to duplicate stories..
+             */
+            return [
+                `${baseName} - ${rotation.replace("-", "minus")}`,
+                { ...baseProps, config: updateAxisSettings(rotation, baseProps.config) },
+            ];
+        });
+    };

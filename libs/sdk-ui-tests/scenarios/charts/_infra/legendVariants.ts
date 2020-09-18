@@ -12,14 +12,15 @@ const LegendVariants: Array<[string, ILegendConfig]> = [
     ["disabled", { enabled: false }],
 ];
 
-export function legendCustomizer<T extends IBucketChartProps>(
-    baseName: string,
-    baseProps: UnboundVisProps<T>,
-): Array<CustomizedScenario<T>> {
-    return LegendVariants.map(([variantName, legendConfig]) => {
-        return [
-            `${baseName} - ${variantName}`,
-            { ...baseProps, config: { ...baseProps.config, legend: legendConfig } },
-        ];
-    });
-}
+export const legendCustomizer = () =>
+    function <T extends IBucketChartProps>(
+        baseName: string,
+        baseProps: UnboundVisProps<T>,
+    ): Array<CustomizedScenario<T>> {
+        return LegendVariants.map(([variantName, legendConfig]) => {
+            return [
+                `${baseName} - ${variantName}`,
+                { ...baseProps, config: { ...baseProps.config, legend: legendConfig } },
+            ];
+        });
+    };

@@ -10,12 +10,12 @@ const legendScenarios = scenariosFor<IComboChartProps>("ComboChart", ComboChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position", ComboChartWithTwoMeasuresAndViewBy, legendCustomizer);
+    .addScenarios("legend position", ComboChartWithTwoMeasuresAndViewBy, legendCustomizer());
 
 const dataLabelScenarios = scenariosFor<IComboChartProps>("ComboChart", ComboChart)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", ComboChartWithTwoMeasuresAndViewBy, dataLabelCustomizer);
+    .addScenarios("data labels", ComboChartWithTwoMeasuresAndViewBy, dataLabelCustomizer());
 
 export default [legendScenarios, dataLabelScenarios];

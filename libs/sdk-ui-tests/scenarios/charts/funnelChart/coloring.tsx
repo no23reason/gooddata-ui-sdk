@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<IFunnelChartProps>("FunnelChart", FunnelCh
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", FunnelChartWithMeasureAndViewBy, coloringCustomizer);
+    .addScenarios("coloring", FunnelChartWithMeasureAndViewBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<IFunnelChartProps>("FunnelChart", FunnelChart)
     .withGroupNames(...ScenarioGroupNames.Coloring)

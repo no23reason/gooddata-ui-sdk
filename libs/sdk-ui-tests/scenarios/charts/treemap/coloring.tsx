@@ -13,7 +13,7 @@ const colorsAndPalette = scenariosFor<ITreemapProps>("Treemap", Treemap)
     .withGroupNames(...ScenarioGroupNames.Coloring)
     .withVisualTestConfig({ groupUnder: "coloring" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("coloring", TreemapWithMeasureViewByAndSegmentBy, coloringCustomizer);
+    .addScenarios("coloring", TreemapWithMeasureViewByAndSegmentBy, coloringCustomizer());
 
 const colorAssignment = scenariosFor<ITreemapProps>("Treemap", Treemap)
     .withGroupNames(...ScenarioGroupNames.Coloring)

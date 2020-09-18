@@ -10,12 +10,12 @@ const legendScenarios = scenariosFor<IHeatmapProps>("Heatmap", Heatmap)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "legend position" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("legend position", HeatmapWithMeasureRowsAndColumns, legendCustomizer);
+    .addScenarios("legend position", HeatmapWithMeasureRowsAndColumns, legendCustomizer());
 
 const dataLabelScenarios = scenariosFor<IHeatmapProps>("Heatmap", Heatmap)
     .withGroupNames(ScenarioGroupNames.ConfigurationCustomization)
     .withVisualTestConfig({ groupUnder: "data labels" })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("data labels", HeatmapWithMeasureRowsAndColumns, dataLabelCustomizer);
+    .addScenarios("data labels", HeatmapWithMeasureRowsAndColumns, dataLabelCustomizer());
 
 export default [legendScenarios, dataLabelScenarios];

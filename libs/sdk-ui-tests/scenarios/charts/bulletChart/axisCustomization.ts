@@ -13,7 +13,7 @@ const singleAxisNameConfig = scenariosFor<IBulletChartProps>("BulletChart", Bull
         screenshotSize: { width: 800, height: 600 },
     })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("axis name customization", BulletChartWithAllMeasuresAndViewBy, axisNameCustomization);
+    .addScenarios("axis name customization", BulletChartWithAllMeasuresAndViewBy, axisNameCustomization());
 
 /*
  * TODO: "long name of X and Y axes are truncated" story used to exist in old stories;

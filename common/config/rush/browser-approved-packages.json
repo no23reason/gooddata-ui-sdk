@@ -183,6 +183,10 @@
       "allowedCategories": [ "production" ]
     },
     {
+      "name": "@storybook/addon-storysource",
+      "allowedCategories": [ "production" ]
+    },
+    {
       "name": "@storybook/addons",
       "allowedCategories": [ "production" ]
     },

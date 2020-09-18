@@ -13,7 +13,7 @@ const singleAxisNameConfig = scenariosFor<IBubbleChartProps>("BubbleChart", Bubb
         screenshotSize: { width: 800, height: 600 },
     })
     .withDefaultTags("vis-config-only", "mock-no-scenario-meta")
-    .addScenarios("axis name customization", BubbleChartWithAllMeasuresAndAttribute, axisNameCustomization);
+    .addScenarios("axis name customization", BubbleChartWithAllMeasuresAndAttribute, axisNameCustomization());
 
 /*
  * TODO: "long name of X and Y axes are truncated" story used to exist in old stories;
