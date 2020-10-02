@@ -280,7 +280,7 @@ class RenderInsightView extends React.Component<
             },
             configPanelElement: ".gd-configuration-panel-content", // this is apparently a well-know constant (see BaseVisualization)
             element: `#${this.elementId}`,
-            environment: "dashboards", // TODO get rid of this
+            // environment: "dashboards", // TODO get rid of this
             locale: this.getLocale(),
             projectId: this.props.workspace,
             visualizationProperties: insightProperties(this.insight),

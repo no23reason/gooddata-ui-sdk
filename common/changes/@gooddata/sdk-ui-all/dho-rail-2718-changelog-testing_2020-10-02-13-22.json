@@ -1,0 +1,11 @@
+{
+    "changes": [
+        {
+            "packageName": "@gooddata/sdk-ui-all",
+            "comment": "remove environment prop",
+            "type": "none"
+        }
+    ],
+    "packageName": "@gooddata/sdk-ui-all",
+    "email": "dan.homola@gooddata.com"
+}
