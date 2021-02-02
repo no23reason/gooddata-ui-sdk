@@ -1,5 +1,5 @@
 // (C) 2020 GoodData Corporation
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
     IAnalyticalBackend,
     IWidgetAlert,
@@ -47,7 +47,10 @@ import { DashboardItemWithKpiAlert } from "../../KpiAlerts/DashboardItemWithKpiA
 import { DashboardItemHeadline } from "../../DashboardItem/DashboardItemHeadline";
 import { useUserWorkspaceSettings } from "../UserWorkspaceSettingsContext";
 import { filterContextToFiltersForWidget } from "../../converters";
-import { getBrokenAlertFiltersBasicInfo } from "../../KpiAlerts/utils/brokenFilterUtils";
+import {
+    enrichBrokenAlertsInfo,
+    getBrokenAlertFiltersBasicInfo,
+} from "../../KpiAlerts/utils/brokenFilterUtils";
 import KpiAlertDialog from "../../KpiAlerts/KpiAlertDialog/KpiAlertDialog";
 import { useAlertDeleteHandler } from "./alertManipulationHooks/useAlertDeleteHandler";
 import { useAlertSaveOrUpdateHandler } from "./alertManipulationHooks/useAlertSaveOrUpdateHandler";
@@ -56,6 +59,7 @@ import { dashboardFilterToFilterContextItem } from "../../utils/filters";
 import { IUseAlertManipulationHandlerConfig } from "./alertManipulationHooks/types";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { useUserWorkspacePermissions } from "../../hooks/useUserWorkspacePermissions";
+import { useBrokenAlertFiltersMeta } from "./useBrokenAlertFiltersMeta";
 
 interface IKpiExecutorProps {
     dashboardRef: ObjRef;
@@ -106,9 +110,35 @@ export const KpiExecutorCore: React.FC<IKpiExecutorProps & WrappedComponentProps
 
     const { error, result, status } = useDataView({ execution, onError }, [execution.fingerprint()]);
 
+    const userWorkspaceSettings = useUserWorkspaceSettings();
+
     // TODO simplify after broken alerts are ready (RAIL-2847)
-    const brokenAlertsInfo = alert ? getBrokenAlertFiltersBasicInfo(alert, kpiWidget, filters) : undefined;
+    const brokenAlertsInfo = useMemo(
+        () => (alert ? getBrokenAlertFiltersBasicInfo(alert, kpiWidget, filters) : undefined),
+        [alert, kpiWidget, filters],
+    );
     const isAlertBroken = !!brokenAlertsInfo?.length;
+
+    const { result: brokenAlertsMeta } = useBrokenAlertFiltersMeta({
+        backend,
+        workspace,
+        brokenAlertFilters: brokenAlertsInfo,
+    });
+
+    const brokenAlertFilters = useMemo(() => {
+        if (!brokenAlertsMeta) {
+            return null;
+        }
+
+        return enrichBrokenAlertsInfo(
+            brokenAlertsInfo,
+            intl,
+            userWorkspaceSettings.responsiveUiDateFormat,
+            // TODO: should we load those on one place for all KPIs? what if no KPI is broken? then we do not need those at all... or use a loader?
+            brokenAlertsMeta.dateDatasets,
+            brokenAlertsMeta.attributeFiltersMeta,
+        );
+    }, [brokenAlertsMeta]);
 
     const alertExecution = useExecution({
         seriesBy: [primaryMeasure],
@@ -152,7 +182,6 @@ export const KpiExecutorCore: React.FC<IKpiExecutorProps & WrappedComponentProps
         alertManipulationHandlerConfig,
     );
 
-    const userWorkspaceSettings = useUserWorkspaceSettings();
     const { result: currentUser } = useCurrentUser({ backend });
     const { result: permissions } = useUserWorkspacePermissions({ backend, workspace });
     const canSetAlert = permissions?.canCreateScheduledMail;
@@ -247,6 +276,7 @@ export const KpiExecutorCore: React.FC<IKpiExecutorProps & WrappedComponentProps
                     filters={filters}
                     isThresholdRepresentingPercent={isThresholdRepresentingPercent}
                     thresholdPlaceholder={thresholdPlaceholder}
+                    brokenAlertFilters={brokenAlertFilters}
                 />
             )}
             alertDeletingStatus={alertDeletingStatus}
