@@ -1,4 +1,4 @@
-// (C) 2019-2020 GoodData Corporation
+// (C) 2019-2021 GoodData Corporation
 
 import {
     IInsightsQueryOptions,
@@ -10,7 +10,7 @@ import {
     SupportedInsightReferenceTypes,
     UnexpectedResponseError,
 } from "@gooddata/sdk-backend-spi";
-import { InsightRecording, RecordedRefType, RecordingIndex } from "./types";
+import { DashboardRecording, InsightRecording, RecordedRefType, RecordingIndex } from "./types";
 import { identifierToRecording, RecordingPager } from "./utils";
 import isEmpty from "lodash/isEmpty";
 import cloneDeep from "lodash/cloneDeep";
@@ -31,6 +31,7 @@ import {
     insightSetFilters,
     uriRef,
     idRef,
+    insightRef,
 } from "@gooddata/sdk-model";
 
 let adHocInsightCounter = 1;
@@ -47,7 +48,12 @@ export class RecordedInsights implements IWorkspaceInsightsService {
     private readonly visClasses: IVisualizationClass[];
 
     constructor(recordings: RecordingIndex, private readonly insightRefType: RecordedRefType) {
-        this.insights = recordings.metadata?.insights ?? {};
+        const insightRecordings = recordings.metadata?.insights ?? {};
+        const dashboardInsightRecordings = insightRecordingsFromDashboardRecordings(
+            recordings.metadata?.dashboards ?? {},
+        );
+
+        this.insights = { ...insightRecordings, ...dashboardInsightRecordings };
         this.visClasses = recordings.metadata?.visClasses?.items ?? [];
     }
 
@@ -218,4 +224,21 @@ function comparator(orderBy: InsightOrdering): Comparator {
 
 function recId(forId: string): string {
     return `i_${identifierToRecording(forId)}`;
+}
+
+function insightRecordingsFromDashboardRecordings(
+    dashboardRecordings: Record<string, DashboardRecording>,
+): Record<string, InsightRecording> {
+    return Object.values(dashboardRecordings).reduce(
+        (acc: Record<string, InsightRecording>, dashboardRecording) => {
+            dashboardRecording.obj.references.insights.forEach((insight) => {
+                const ref = insightRef(insight);
+                const id = isIdentifierRef(ref) ? ref.identifier : ref.uri;
+                const recordingId = recId(identifierToRecording(id));
+                acc[recordingId] = { obj: insight };
+            });
+            return acc;
+        },
+        {},
+    );
 }

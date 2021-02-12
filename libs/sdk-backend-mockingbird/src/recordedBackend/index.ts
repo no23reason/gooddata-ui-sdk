@@ -30,7 +30,7 @@ import {
     IWorkspacePermissions,
     ITheme,
 } from "@gooddata/sdk-backend-spi";
-import { IColorPalette } from "@gooddata/sdk-model";
+import { IColorPalette, uriRef } from "@gooddata/sdk-model";
 import { RecordedExecutionFactory } from "./execution";
 import { RecordedBackendConfig, RecordingIndex } from "./types";
 import { RecordedInsights } from "./insights";
@@ -38,6 +38,7 @@ import { RecordedCatalogFactory } from "./catalog";
 import { RecordedAttributes } from "./attributes";
 import { RecordedMeasures } from "./measures";
 import { RecordedFacts } from "./facts";
+import { RecordedDashboards } from "./dashboards";
 
 const defaultConfig: RecordedBackendConfig = {
     hostname: "test",
@@ -133,7 +134,7 @@ function recordedWorkspace(
             return new RecordedInsights(recordings, implConfig.useRefType ?? "uri");
         },
         dashboards(): IWorkspaceDashboardsService {
-            throw new NotSupported("not supported");
+            return new RecordedDashboards(recordings, workspace, implConfig.useRefType ?? "uri");
         },
         settings(): IWorkspaceSettingsService {
             return {
@@ -186,7 +187,10 @@ function recordedWorkspace(
 function recordedUserService(implConfig: RecordedBackendConfig): IUserService {
     return {
         getUser() {
-            throw new NotSupported("not supported");
+            return Promise.resolve({
+                login: USER_ID,
+                ref: uriRef("recordedUser"),
+            });
         },
         settings(): IUserSettingsService {
             return {

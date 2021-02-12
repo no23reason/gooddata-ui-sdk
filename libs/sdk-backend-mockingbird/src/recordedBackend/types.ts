@@ -1,10 +1,11 @@
-// (C) 2019-2020 GoodData Corporation
+// (C) 2019-2021 GoodData Corporation
 import {
     CatalogItem,
     IAnalyticalBackendConfig,
     IAttributeDisplayFormMetadataObject,
     IAttributeElement,
     ICatalogGroup,
+    IDashboardWithReferences,
     ISettings,
     ITheme,
 } from "@gooddata/sdk-backend-spi";
@@ -58,6 +59,7 @@ export type RecordingIndex = {
     metadata?: {
         catalog?: CatalogRecording;
         displayForms?: { [id: string]: DisplayFormRecording };
+        dashboards?: { [id: string]: DashboardRecording };
         insights?: { [id: string]: InsightRecording };
         visClasses?: VisClassesRecording;
     };
@@ -94,6 +96,13 @@ export type DisplayFormRecording = {
  */
 export type InsightRecording = {
     obj: IInsight;
+};
+
+/**
+ * @internal
+ */
+export type DashboardRecording = {
+    obj: IDashboardWithReferences;
 };
 
 /**

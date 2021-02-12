@@ -15,6 +15,7 @@ import { IAttributeElement } from '@gooddata/sdk-backend-spi';
 import { IBackendCapabilities } from '@gooddata/sdk-backend-spi';
 import { ICatalogGroup } from '@gooddata/sdk-backend-spi';
 import { IColorPalette } from '@gooddata/sdk-model';
+import { IDashboardWithReferences } from '@gooddata/sdk-backend-spi';
 import { IDataView } from '@gooddata/sdk-backend-spi';
 import { IExecutionDefinition } from '@gooddata/sdk-model';
 import { IInsight } from '@gooddata/sdk-model';
@@ -35,6 +36,11 @@ export function compositeBackend(...components: CompositeBackendPart[]): IAnalyt
 export type CompositeBackendPart = {
     workspace: string;
     backend: IAnalyticalBackend;
+};
+
+// @internal (undocumented)
+export type DashboardRecording = {
+    obj: IDashboardWithReferences;
 };
 
 // @internal (undocumented)
@@ -142,6 +148,9 @@ export type RecordingIndex = {
         catalog?: CatalogRecording;
         displayForms?: {
             [id: string]: DisplayFormRecording;
+        };
+        dashboards?: {
+            [id: string]: DashboardRecording;
         };
         insights?: {
             [id: string]: InsightRecording;
