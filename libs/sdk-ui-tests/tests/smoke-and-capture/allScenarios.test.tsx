@@ -4,7 +4,7 @@ import flatMap from "lodash/flatMap";
 import unionBy from "lodash/unionBy";
 import isArray from "lodash/isArray";
 import isObject from "lodash/isObject";
-import { defFingerprint, IInsight, IInsightDefinition, insightTitle } from "@gooddata/sdk-model";
+import { defFingerprint, idRef, IInsight, IInsightDefinition, insightTitle } from "@gooddata/sdk-model";
 import * as fs from "fs";
 import * as path from "path";
 import allScenarios from "../../scenarios";
@@ -16,6 +16,7 @@ import { mountInsight } from "../_infra/renderPlugVis";
 import { storeDirectoryFor } from "./store";
 import { readJsonSync, writeAsJsonSync } from "./utils";
 import { DataViewRequests, RecordingFiles, ScenarioDescriptor } from "@gooddata/mock-handling";
+import { mountDashboard } from "../_infra/renderDashboard";
 
 type AllScenariosType = [string, IScenario<any>];
 
@@ -252,6 +253,33 @@ function scenarioStoreInsight(scenario: IScenario<any>, def: IInsightDefinition)
  * that visualization.
  */
 const PlugVisUnsupported: string[] = [];
+
+// eslint-disable-next-line jest/no-focused-tests
+describe.only("dashboardView", () => {
+    // Get rid of all the "not wrapped in act" fired by dashboard renderer for some reason (this should be handled by enzyme)
+    // eslint-disable-next-line no-console
+    const originalError = console.error;
+    beforeAll(() => {
+        // eslint-disable-next-line no-console
+        console.error = (...args: string[]) => {
+            if (/Warning.*not wrapped in act/.test(args[0])) {
+                return;
+            }
+            originalError.call(console, ...args);
+        };
+    });
+
+    afterAll(() => {
+        // eslint-disable-next-line no-console
+        console.error = originalError;
+    });
+
+    it("works", async () => {
+        const interactions = await mountDashboard(idRef("aba3ZlEEgNsV", "analyticalDashboard"));
+        // eslint-disable-next-line no-console
+        console.log(interactions);
+    });
+});
 
 describe("all scenarios", () => {
     const Scenarios: AllScenariosType[] = flatMap(allScenarios, (s): AllScenariosType[] => {
