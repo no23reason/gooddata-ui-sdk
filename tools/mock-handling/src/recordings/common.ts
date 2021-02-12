@@ -1,4 +1,4 @@
-// (C) 2007-2020 GoodData Corporation
+// (C) 2007-2021 GoodData Corporation
 import { IAnalyticalBackend } from "@gooddata/sdk-backend-spi";
 import fs from "fs";
 import pick from "lodash/pick";
@@ -16,6 +16,7 @@ export type RecordingIndexEntry = {
 export enum RecordingType {
     Execution = "execution",
     DisplayForms = "displayForms",
+    Dashboards = "dashboards",
     Insights = "insights",
     Catalog = "catalog",
     VisClasses = "visClasses",

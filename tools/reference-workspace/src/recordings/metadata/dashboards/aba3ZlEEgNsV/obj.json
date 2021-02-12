@@ -1,0 +1,59 @@
+{
+    "dashboard": {
+        "created": "2020-10-09 08:47:28",
+        "description": "",
+        "filterContext": {
+            "description": "",
+            "filters": [
+                {
+                    "dateFilter": {
+                        "from": "0",
+                        "granularity": "GDC.time.month",
+                        "to": "0",
+                        "type": "relative"
+                    }
+                }
+            ],
+            "identifier": "aa23Zbnhh4po",
+            "ref": { "uri": "/gdc/md/referenceworkspace/obj/1314" },
+            "title": "filterContext",
+            "uri": "/gdc/md/referenceworkspace/obj/1314"
+        },
+        "identifier": "aba3ZlEEgNsV",
+        "isLocked": false,
+        "layout": {
+            "rows": [
+                {
+                    "columns": [
+                        {
+                            "content": {
+                                "dateDataSet": { "uri": "/gdc/md/referenceworkspace/obj/557" },
+                                "description": "",
+                                "drills": [],
+                                "identifier": "aam3173SdnsT",
+                                "ignoreDashboardFilters": [],
+                                "kpi": {
+                                    "comparisonDirection": "growIsGood",
+                                    "comparisonType": "previousPeriod",
+                                    "metric": { "uri": "/gdc/md/referenceworkspace/obj/1267" }
+                                },
+                                "ref": { "uri": "/gdc/md/referenceworkspace/obj/1315" },
+                                "title": "_Snapshot [EOP]",
+                                "type": "kpi",
+                                "uri": "/gdc/md/referenceworkspace/obj/1315"
+                            },
+                            "size": { "xl": { "widthAsGridColumnsCount": 2 } }
+                        }
+                    ]
+                }
+            ],
+            "type": "fluidLayout"
+        },
+        "ref": { "uri": "/gdc/md/referenceworkspace/obj/1316" },
+        "tags": [],
+        "title": "test",
+        "updated": "2020-10-09 08:47:28",
+        "uri": "/gdc/md/referenceworkspace/obj/1316"
+    },
+    "references": { "insights": [] }
+}

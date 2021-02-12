@@ -1,4 +1,4 @@
-// (C) 2007-2020 GoodData Corporation
+// (C) 2007-2021 GoodData Corporation
 
 import * as fs from "fs";
 import * as path from "path";
@@ -14,12 +14,14 @@ import { IRecording, RecordingType } from "../recordings/common";
 import { DisplayFormRecording } from "../recordings/displayForms";
 import { ExecutionRecording } from "../recordings/execution";
 import { InsightRecording } from "../recordings/insights";
+import { DashboardRecording } from "../recordings/dashboards";
 import { CatalogRecording } from "../recordings/catalog";
 import { VisClassesRecording } from "../recordings/visClasses";
 import { generateConstantsForDisplayForms } from "./displayForm";
 import { generateConstantsForDataSamples } from "./dataSample";
 import { generateConstantsForExecutions } from "./execution";
 import { generateConstantsForInsights } from "./insight";
+import { generateConstantsForDashboards } from "./dashboard";
 import { generateConstantsForCatalog } from "./catalog";
 import { generateConstantsForVisClasses } from "./visClasses";
 import groupBy from "lodash/groupBy";
@@ -74,7 +76,8 @@ function generateIndexConst(input: IndexGeneratorInput): OptionalKind<VariableSt
             ${input.catalog() !== null ? "catalog," : ""}
             ${input.visClasses() !== null ? "visClasses," : ""}
             displayForms: { ${recNameList(input.displayForms())} },
-            insights: { ${recNameList(input.insights())} }
+            insights: { ${recNameList(input.insights())} },
+            dashboards: { ${recNameList(input.dashboards())} }
         }
     `;
 
@@ -104,6 +107,7 @@ function transformToTypescript(
         sourceFile.addVariableStatements(generateConstantsForExecutions(input.executions(), targetDir));
         sourceFile.addVariableStatements(generateConstantsForDisplayForms(input.displayForms(), targetDir));
         sourceFile.addVariableStatements(generateConstantsForInsights(input.insights(), targetDir));
+        sourceFile.addVariableStatements(generateConstantsForDashboards(input.dashboards(), targetDir));
         sourceFile.addVariableStatements(generateConstantsForCatalog(input.catalog(), targetDir));
         sourceFile.addVariableStatements(generateConstantsForVisClasses(input.visClasses(), targetDir));
         sourceFile.addVariableStatement(generateIndexConst(input));
@@ -119,6 +123,7 @@ type IndexGeneratorInput = {
     executions: () => ExecutionRecording[];
     displayForms: () => DisplayFormRecording[];
     insights: () => InsightRecording[];
+    dashboards: () => DashboardRecording[];
     catalog: () => CatalogRecording | null;
     visClasses: () => VisClassesRecording | null;
 };
@@ -135,6 +140,9 @@ function createGeneratorInput(recordings: IRecording[]): IndexGeneratorInput {
         },
         insights: () => {
             return (categorized[RecordingType.Insights] as InsightRecording[]) || [];
+        },
+        dashboards: () => {
+            return (categorized[RecordingType.Dashboards] as DashboardRecording[]) || [];
         },
         catalog: () =>
             (categorized[RecordingType.Catalog] &&
