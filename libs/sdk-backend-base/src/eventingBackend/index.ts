@@ -1,4 +1,4 @@
-// (C) 2007-2020 GoodData Corporation
+// (C) 2007-2021 GoodData Corporation
 import {
     IAnalyticalBackend,
     IDataView,
@@ -65,7 +65,7 @@ class WithExecutionResultEventing extends DecoratedExecutionResult {
             })
             .catch((e) => {
                 if (failedResultReadAll) {
-                    failedResultReadAll(e);
+                    failedResultReadAll(e, this.definition);
                 }
 
                 throw e;
@@ -87,7 +87,7 @@ class WithExecutionResultEventing extends DecoratedExecutionResult {
             })
             .catch((e) => {
                 if (failedResultReadWindow) {
-                    failedResultReadWindow(offset, size, e);
+                    failedResultReadWindow(offset, size, e, this.definition);
                 }
 
                 throw e;
@@ -126,8 +126,9 @@ export type AnalyticalBackendCallbacks = {
      * Called when IExecuteResult.readAll() ends with an error.
      *
      * @param error - error from the underlying backend, contractually this should be an instance of AnalyticalBackendError
+     * @param definition - the execution definition that ended up in this error
      */
-    failedResultReadAll?: (error: any) => void;
+    failedResultReadAll?: (error: any, definition: IExecutionDefinition) => void;
 
     /**
      * Called when IExecuteResult.readWindow() successfully completes. The function is called with the requested
@@ -146,8 +147,14 @@ export type AnalyticalBackendCallbacks = {
      * @param offset - *requested window offset, the actual offset may differ, actual offset is in data view
      * @param size - *request* window size, the actual size may differ, actual size is in data view
      * @param error - error from the underlying backend, contractually this should be an instance of AnalyticalBackendError
+     * @param definition - the execution definition that ended up in this error
      */
-    failedResultReadWindow?: (offset: number[], size: number[], error: any) => void;
+    failedResultReadWindow?: (
+        offset: number[],
+        size: number[],
+        error: any,
+        definition: IExecutionDefinition,
+    ) => void;
 };
 
 /**

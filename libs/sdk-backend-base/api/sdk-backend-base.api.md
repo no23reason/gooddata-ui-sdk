@@ -78,9 +78,9 @@ export type AnalyticalBackendCallbacks = {
     beforeExecute?: (def: IExecutionDefinition) => void;
     successfulExecute?: (result: IExecutionResult) => void;
     successfulResultReadAll?: (dataView: IDataView) => void;
-    failedResultReadAll?: (error: any) => void;
+    failedResultReadAll?: (error: any, definition: IExecutionDefinition) => void;
     successfulResultReadWindow?: (offset: number[], size: number[], dataView: IDataView) => void;
-    failedResultReadWindow?: (offset: number[], size: number[], error: any) => void;
+    failedResultReadWindow?: (offset: number[], size: number[], error: any, definition: IExecutionDefinition) => void;
 };
 
 // @public
