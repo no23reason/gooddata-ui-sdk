@@ -1,0 +1,99 @@
+{
+    "dashboard": {
+        "created": "2021-02-15 12:50:42",
+        "description": "",
+        "filterContext": {
+            "description": "",
+            "filters": [],
+            "identifier": "afHe8VM3f1N2",
+            "ref": { "uri": "/gdc/md/referenceworkspace/obj/1353" },
+            "title": "filterContext",
+            "uri": "/gdc/md/referenceworkspace/obj/1353"
+        },
+        "identifier": "afLe7WFTeYmc",
+        "isLocked": false,
+        "layout": {
+            "rows": [
+                {
+                    "columns": [
+                        {
+                            "content": {
+                                "dateDataSet": { "uri": "/gdc/md/referenceworkspace/obj/557" },
+                                "description": "",
+                                "drills": [],
+                                "identifier": "adMfhSw9apeT",
+                                "ignoreDashboardFilters": [],
+                                "insight": { "uri": "/gdc/md/referenceworkspace/obj/1275" },
+                                "properties": {},
+                                "ref": { "uri": "/gdc/md/referenceworkspace/obj/1354" },
+                                "title": "Test Bar Chart",
+                                "type": "insight",
+                                "uri": "/gdc/md/referenceworkspace/obj/1354"
+                            },
+                            "size": { "xl": { "widthAsGridColumnsCount": 6 } }
+                        }
+                    ]
+                }
+            ],
+            "type": "fluidLayout"
+        },
+        "ref": { "uri": "/gdc/md/referenceworkspace/obj/1355" },
+        "tags": [],
+        "title": "test3",
+        "updated": "2021-02-15 12:50:42",
+        "uri": "/gdc/md/referenceworkspace/obj/1355"
+    },
+    "references": {
+        "insights": [
+            {
+                "insight": {
+                    "buckets": [
+                        {
+                            "items": [
+                                {
+                                    "measure": {
+                                        "definition": {
+                                            "measureDefinition": {
+                                                "filters": [],
+                                                "item": { "uri": "/gdc/md/referenceworkspace/obj/1272" }
+                                            }
+                                        },
+                                        "localIdentifier": "b6c777271d40478da9829be1f24e29ea",
+                                        "title": "Won"
+                                    }
+                                }
+                            ],
+                            "localIdentifier": "measures"
+                        },
+                        {
+                            "items": [
+                                {
+                                    "attribute": {
+                                        "displayForm": { "uri": "/gdc/md/referenceworkspace/obj/1089" },
+                                        "localIdentifier": "56971915069f4702a5f8948b4b479860"
+                                    }
+                                }
+                            ],
+                            "localIdentifier": "view"
+                        }
+                    ],
+                    "filters": [],
+                    "identifier": "acCgxKCchupK",
+                    "properties": {
+                        "controls": {
+                            "grid": { "enabled": false },
+                            "xaxis": { "visible": false },
+                            "yaxis": { "visible": false }
+                        }
+                    },
+                    "ref": { "uri": "/gdc/md/referenceworkspace/obj/1275" },
+                    "sorts": [],
+                    "title": "Test Bar Chart",
+                    "updated": "2020-01-20 09:30:52",
+                    "uri": "/gdc/md/referenceworkspace/obj/1275",
+                    "visualizationUrl": "local:bar"
+                }
+            }
+        ]
+    }
+}

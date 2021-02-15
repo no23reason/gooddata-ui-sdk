@@ -1,0 +1,76 @@
+{
+    "dashboard": {
+        "created": "2021-02-15 10:48:41",
+        "description": "",
+        "filterContext": {
+            "description": "",
+            "filters": [
+                {
+                    "dateFilter": {
+                        "from": "0",
+                        "granularity": "GDC.time.month",
+                        "to": "0",
+                        "type": "relative"
+                    }
+                }
+            ],
+            "identifier": "acweSIBOfOFR",
+            "ref": { "uri": "/gdc/md/referenceworkspace/obj/1350" },
+            "title": "filterContext",
+            "uri": "/gdc/md/referenceworkspace/obj/1350"
+        },
+        "identifier": "acXeSCq5c0R7",
+        "isLocked": false,
+        "layout": {
+            "rows": [
+                {
+                    "columns": [
+                        {
+                            "content": {
+                                "dateDataSet": { "uri": "/gdc/md/referenceworkspace/obj/557" },
+                                "description": "",
+                                "drills": [],
+                                "identifier": "ae0eHAige38q",
+                                "ignoreDashboardFilters": [],
+                                "kpi": {
+                                    "comparisonDirection": "growIsGood",
+                                    "comparisonType": "previousPeriod",
+                                    "metric": { "uri": "/gdc/md/referenceworkspace/obj/1267" }
+                                },
+                                "ref": { "uri": "/gdc/md/referenceworkspace/obj/1349" },
+                                "title": "_Snapshot [EOP]",
+                                "type": "kpi",
+                                "uri": "/gdc/md/referenceworkspace/obj/1349"
+                            },
+                            "size": { "xl": { "widthAsGridColumnsCount": 2 } }
+                        },
+                        {
+                            "content": {
+                                "description": "",
+                                "drills": [],
+                                "identifier": "aaAeW6UAaJCS",
+                                "ignoreDashboardFilters": [],
+                                "kpi": {
+                                    "comparisonType": "none",
+                                    "metric": { "uri": "/gdc/md/referenceworkspace/obj/1268" }
+                                },
+                                "ref": { "uri": "/gdc/md/referenceworkspace/obj/1351" },
+                                "title": "# Of Opportunities",
+                                "type": "kpi",
+                                "uri": "/gdc/md/referenceworkspace/obj/1351"
+                            },
+                            "size": { "xl": { "widthAsGridColumnsCount": 2 } }
+                        }
+                    ]
+                }
+            ],
+            "type": "fluidLayout"
+        },
+        "ref": { "uri": "/gdc/md/referenceworkspace/obj/1352" },
+        "tags": [],
+        "title": "test2",
+        "updated": "2021-02-15 10:48:41",
+        "uri": "/gdc/md/referenceworkspace/obj/1352"
+    },
+    "references": { "insights": [] }
+}

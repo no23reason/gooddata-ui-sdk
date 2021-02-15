@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable header/header */
-/* THIS FILE WAS AUTO-GENERATED USING MOCK HANDLING TOOL; YOU SHOULD NOT EDIT THIS FILE; GENERATE TIME: 2021-02-12T16:02:54.379Z; */
+/* THIS FILE WAS AUTO-GENERATED USING MOCK HANDLING TOOL; YOU SHOULD NOT EDIT THIS FILE; GENERATE TIME: 2021-02-15T11:51:05.800Z; */
 
 const fp_00ab8c432637030b305313405b3f4efc = {
     definition: require("./uiTestScenarios/executions/00ab8c432637030b305313405b3f4efc/definition.json"),
@@ -2967,6 +2967,8 @@ export const Insights = {
 };
 const d_aaRaEZRWdRpQ = { obj: require("./metadata/dashboards/aaRaEZRWdRpQ/obj.json") };
 const d_aba3ZlEEgNsV = { obj: require("./metadata/dashboards/aba3ZlEEgNsV/obj.json") };
+const d_acXeSCq5c0R7 = { obj: require("./metadata/dashboards/acXeSCq5c0R7/obj.json") };
+const d_afLe7WFTeYmc = { obj: require("./metadata/dashboards/afLe7WFTeYmc/obj.json") };
 const catalog = {
     items: require("./metadata/catalog/items.json"),
     groups: require("./metadata/catalog/groups.json"),
@@ -3660,6 +3662,6 @@ export const Recordings = {
             i_Xirr_74456ce90909b92d28a01949e02ac574,
             i_Xirr_e5deb6dfe7ff06cdc5210a56fc84c841,
         },
-        dashboards: { d_aaRaEZRWdRpQ, d_aba3ZlEEgNsV },
+        dashboards: { d_aaRaEZRWdRpQ, d_aba3ZlEEgNsV, d_acXeSCq5c0R7, d_afLe7WFTeYmc },
     },
 };
