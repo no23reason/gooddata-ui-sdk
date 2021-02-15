@@ -36,6 +36,7 @@ import { useDashboardViewConfig } from "./DashboardViewConfigContext";
 import { useUserWorkspaceSettings } from "./UserWorkspaceSettingsContext";
 import { useColorPalette } from "./ColorPaletteContext";
 import { useAttributesWithDrillDown } from "./AttributesWithDrillDownContext";
+import { RenderFunction } from "../../interfaces/Visualization";
 
 interface IInsightRendererProps {
     insightWidget: IInsightWidget;
@@ -49,6 +50,7 @@ interface IInsightRendererProps {
     onError?: OnError;
     ErrorComponent: React.ComponentType<IErrorProps>;
     LoadingComponent: React.ComponentType<ILoadingProps>;
+    renderFun?: RenderFunction;
 }
 
 export const InsightRenderer: React.FC<IInsightRendererProps> = ({
@@ -63,6 +65,7 @@ export const InsightRenderer: React.FC<IInsightRendererProps> = ({
     workspace,
     ErrorComponent,
     LoadingComponent,
+    renderFun,
 }) => {
     const effectiveBackend = useBackend(backend);
     const effectiveWorkspace = useWorkspace(workspace);
@@ -206,6 +209,7 @@ export const InsightRenderer: React.FC<IInsightRendererProps> = ({
                 pushData={handlePushData}
                 ErrorComponent={ErrorComponent}
                 LoadingComponent={LoadingComponent}
+                renderFun={renderFun}
             />
         </IntlWrapper>
     );

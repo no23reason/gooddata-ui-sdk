@@ -13,6 +13,7 @@ export {
     IKpiViewProps,
     KpiView,
     defaultThemeModifier,
+    DashboardInsightRenderer,
 } from "./DashboardView";
 export { mergeFiltersWithDashboard } from "./mergeFiltersWithDashboard";
 export { isDateFilterIrrelevant } from "./utils/filters";

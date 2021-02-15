@@ -4,3 +4,4 @@ export { DashboardViewErrorBoundary as DashboardView };
 export { IDashboardViewProps } from "./types";
 export { KpiView, IKpiViewProps } from "./KpiView";
 export { defaultThemeModifier } from "./defaultThemeModifier";
+export { InsightRenderer as DashboardInsightRenderer } from "./InsightRenderer";

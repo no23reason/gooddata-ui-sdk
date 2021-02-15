@@ -80,7 +80,7 @@ export function recordedBackend(
             return recordedBackend(index, { ...config, hostname });
         },
         withTelemetry(_component: string, _props: object): IAnalyticalBackend {
-            return backend;
+            return this;
         },
         withAuthentication(_: IAuthenticationProvider): IAnalyticalBackend {
             return this;

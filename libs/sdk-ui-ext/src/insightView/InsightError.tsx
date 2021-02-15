@@ -22,7 +22,7 @@ const InsightErrorCore: React.FC<IInsightErrorProps & WrappedComponentProps> = (
     intl,
 }) => {
     const errorMapping = useMemo<IErrorDescriptors>(() => newErrorMapping(intl), [intl]);
-    const errorProps = useMemo(() => errorMapping[error.getMessage()] ?? { message: error.message }, [
+    const errorProps = useMemo(() => errorMapping[error?.getMessage?.()] ?? { message: error.message }, [
         errorMapping,
         error,
     ]);

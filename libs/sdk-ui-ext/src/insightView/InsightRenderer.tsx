@@ -8,7 +8,7 @@ import { injectIntl, WrappedComponentProps } from "react-intl";
 import { IExecutionFactory, IExportResult, IUserWorkspaceSettings } from "@gooddata/sdk-backend-spi";
 import { IInsightDefinition, insightProperties, IColorPalette, insightTitle } from "@gooddata/sdk-model";
 
-import { IVisualization, IVisProps } from "../internal/interfaces/Visualization";
+import { IVisualization, IVisProps, RenderFunction } from "../internal/interfaces/Visualization";
 import { FullVisualizationCatalog } from "../internal/components/VisualizationCatalog";
 import {
     GoodDataSdkError,
@@ -38,6 +38,7 @@ export interface IInsightRendererProps extends Omit<IInsightViewProps, "insight"
     settings: IUserWorkspaceSettings | undefined;
     colorPalette: IColorPalette | undefined;
     onError?: (error: GoodDataSdkError | undefined) => void;
+    renderFun?: RenderFunction;
 }
 
 const getElementId = () => `gd-vis-${uuidv4()}`;
@@ -61,6 +62,7 @@ class InsightRendererCore extends React.PureComponent<IInsightRendererProps & Wr
         LoadingComponent,
         pushData: noop,
         locale: DefaultLocale,
+        renderFun: render,
     };
 
     private unmountVisualization = () => {
@@ -136,7 +138,7 @@ class InsightRendererCore extends React.PureComponent<IInsightRendererProps & Wr
             projectId: this.props.workspace,
             visualizationProperties: insightProperties(this.props.insight),
             featureFlags: this.props.settings,
-            renderFun: render,
+            renderFun: this.props.renderFun,
         });
     };
 

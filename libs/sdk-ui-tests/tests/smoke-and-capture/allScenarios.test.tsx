@@ -275,7 +275,7 @@ describe.only("dashboardView", () => {
     });
 
     it("works", async () => {
-        const interactions = await mountDashboard(idRef("aba3ZlEEgNsV", "analyticalDashboard"));
+        const interactions = await mountDashboard(idRef("aaRaEZRWdRpQ", "analyticalDashboard"));
         // eslint-disable-next-line no-console
         console.log(interactions);
     });
@@ -288,7 +288,7 @@ describe("all scenarios", () => {
         return testInputs.map((t) => {
             return [t.fullyQualifiedName, t];
         });
-    });
+    }).slice(0, 1);
 
     it.each(Scenarios)("%s should lead to execution", async (_scenarioFqn, scenario) => {
         const interactions = await mountChartAndCaptureNormalized(scenario);

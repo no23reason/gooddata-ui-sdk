@@ -82,7 +82,11 @@ export function backendWithCapturing(
     const checkEnding = () => {
         const areAllDone = Object.values(allInteractions.interactions).every((i) => i.done);
 
+        console.log("DONE?", allInteractions, areAllDone);
+
         if (areAllDone) {
+            console.log("lets end this!");
+
             dataRequestResolver(allInteractions);
         }
     };
@@ -95,9 +99,11 @@ export function backendWithCapturing(
         {
             beforeExecute: (def) => {
                 const fingerprint = defFingerprint(def);
+
                 if (allInteractions.interactions[fingerprint]) {
                     return;
                 }
+                console.log("BEFORE", fingerprint);
 
                 allInteractions.interactions[fingerprint] = {
                     triggeredExecution: def,
@@ -107,9 +113,16 @@ export function backendWithCapturing(
             },
             failedResultReadAll: (_, def) => {
                 const fingerprint = defFingerprint(def);
+
                 if (!allInteractions.interactions[fingerprint]) {
                     throw new Error("Definition not found");
                 }
+
+                if (allInteractions.interactions[fingerprint].done) {
+                    return;
+                }
+
+                console.log("READALL", fingerprint);
 
                 allInteractions.interactions[fingerprint].dataViewRequests.allData = true;
                 allInteractions.interactions[fingerprint].done = true;
@@ -118,9 +131,16 @@ export function backendWithCapturing(
             },
             failedResultReadWindow: (offset, size, _e, def) => {
                 const fingerprint = defFingerprint(def);
+
                 if (!allInteractions.interactions[fingerprint]) {
                     throw new Error("Definition not found");
                 }
+
+                if (allInteractions.interactions[fingerprint].done) {
+                    return;
+                }
+
+                console.log("READWIN", fingerprint);
 
                 if (!allInteractions.interactions[fingerprint].dataViewRequests.windows) {
                     allInteractions.interactions[fingerprint].dataViewRequests.windows = [];
