@@ -1,78 +1,146 @@
 // (C) 2020 GoodData Corporation
 
-import { recordedBackend } from "@gooddata/sdk-backend-mockingbird";
+import { dummyBackend, recordedBackend } from "@gooddata/sdk-backend-mockingbird";
 import { ReferenceRecordings } from "@gooddata/reference-workspace";
-import { IAnalyticalBackend } from "@gooddata/sdk-backend-spi";
-import { IExecutionDefinition } from "@gooddata/sdk-model";
+import { IAnalyticalBackend, IAnalyticalWorkspace } from "@gooddata/sdk-backend-spi";
+import { defFingerprint, IExecutionDefinition } from "@gooddata/sdk-model";
 import { NormalizationState, withEventing, withNormalization } from "@gooddata/sdk-backend-base";
 import { DataViewRequests } from "@gooddata/mock-handling";
 
 /**
- * Recorded chart interactions
+ * Recorded dashboard interaction
  */
-export type ChartInteractions = {
+export type DashboardInteraction = {
     /**
      * The execution that was actually triggered
      */
-    triggeredExecution?: IExecutionDefinition;
+    triggeredExecution: IExecutionDefinition;
+
+    /**
+     * What data views were requested during rendering
+     */
+    dataViewRequests: DataViewRequests;
+};
+
+export type DashboardInteractions<TInteraction = DashboardInteraction> = {
+    interactions: Record<string, TInteraction>;
 
     /**
      * If execution normalization is in effect, then this describes what the
      * normalization process did.
      */
     normalizationState?: NormalizationState;
-
-    /**
-     * What data views were requested during rendering
-     */
-    dataViewRequests: DataViewRequests;
-
-    effectiveProps?: any;
 };
 
+function hybridWorkspace(recorded: IAnalyticalWorkspace, dummy: IAnalyticalWorkspace): IAnalyticalWorkspace {
+    return {
+        ...recorded,
+        execution() {
+            return dummy.execution();
+        },
+    };
+}
+
+function hybridBackend(recorded: IAnalyticalBackend, dummy: IAnalyticalBackend): IAnalyticalBackend {
+    const backend: IAnalyticalBackend = {
+        ...recorded,
+        onHostname(_) {
+            return this;
+        },
+        withAuthentication() {
+            return this;
+        },
+        withTelemetry() {
+            return this;
+        },
+        workspace(id: string) {
+            return hybridWorkspace(recorded.workspace(id), dummy.workspace(id));
+        },
+    };
+
+    return backend;
+}
+
 /**
- * Creates an instance of backend which captures interactions with the execution service. The captured
- * interactions are resolved as soon as all data or data window is requested on the execution result.
+ * Creates an instance of backend which captures interactions with the execution service.
  */
 export function backendWithCapturing(
     normalize: boolean = false,
-): [IAnalyticalBackend, Promise<ChartInteractions>] {
-    const interactions: ChartInteractions = {
-        dataViewRequests: {},
+): [IAnalyticalBackend, Promise<DashboardInteractions>] {
+    type WrappedDashboardInteraction = DashboardInteraction & { done: boolean };
+
+    const allInteractions: DashboardInteractions<WrappedDashboardInteraction> = {
+        interactions: {},
     };
 
-    let dataRequestResolver: (interactions: ChartInteractions) => void;
-    const capturedInteractions = new Promise<ChartInteractions>((resolve) => {
+    // const capturedInteractions = Promise.resolve(allInteractions);
+    let dataRequestResolver: (interactions: DashboardInteractions) => void;
+    const capturedInteractions = new Promise<DashboardInteractions>((resolve) => {
         dataRequestResolver = resolve;
     });
 
-    // TODO RAIL-2870 capture all requests, not only one
-    let backend = withEventing(recordedBackend(ReferenceRecordings.Recordings), {
-        beforeExecute: (def) => {
-            // eslint-disable-next-line no-console
-            console.log("beforeExecute", def);
-            interactions.triggeredExecution = def;
-        },
-        failedResultReadAll: (_) => {
-            interactions.dataViewRequests.allData = true;
+    const checkEnding = () => {
+        const areAllDone = Object.values(allInteractions.interactions).every((i) => i.done);
 
-            dataRequestResolver(interactions);
-        },
-        failedResultReadWindow: (offset: number[], size: number[]) => {
-            if (!interactions.dataViewRequests.windows) {
-                interactions.dataViewRequests.windows = [];
-            }
+        if (areAllDone) {
+            dataRequestResolver(allInteractions);
+        }
+    };
 
-            interactions.dataViewRequests.windows.push({ offset, size });
+    let backend = withEventing(
+        hybridBackend(
+            recordedBackend(ReferenceRecordings.Recordings),
+            dummyBackend({ hostname: "test", raiseNoDataExceptions: true }),
+        ),
+        {
+            beforeExecute: (def) => {
+                const fingerprint = defFingerprint(def);
+                if (allInteractions.interactions[fingerprint]) {
+                    return;
+                }
 
-            dataRequestResolver(interactions);
+                allInteractions.interactions[fingerprint] = {
+                    triggeredExecution: def,
+                    dataViewRequests: {},
+                    done: false,
+                };
+            },
+            failedResultReadAll: (_, def) => {
+                const fingerprint = defFingerprint(def);
+                if (!allInteractions.interactions[fingerprint]) {
+                    throw new Error("Definition not found");
+                }
+
+                allInteractions.interactions[fingerprint].dataViewRequests.allData = true;
+                allInteractions.interactions[fingerprint].done = true;
+
+                checkEnding();
+            },
+            failedResultReadWindow: (offset, size, _e, def) => {
+                const fingerprint = defFingerprint(def);
+                if (!allInteractions.interactions[fingerprint]) {
+                    throw new Error("Definition not found");
+                }
+
+                if (!allInteractions.interactions[fingerprint].dataViewRequests.windows) {
+                    allInteractions.interactions[fingerprint].dataViewRequests.windows = [];
+                }
+
+                allInteractions.interactions[fingerprint].dataViewRequests.windows?.push({
+                    offset,
+                    size,
+                });
+                allInteractions.interactions[fingerprint].done = true;
+
+                checkEnding();
+            },
         },
-    });
+    );
 
     if (normalize) {
         backend = withNormalization(backend, {
             normalizationStatus: (state: NormalizationState) => {
-                interactions.normalizationState = state;
+                allInteractions.normalizationState = state;
             },
         });
     }
