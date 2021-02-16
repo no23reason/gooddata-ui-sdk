@@ -3,8 +3,9 @@ import process from "process";
 import path from "path";
 import fs from "fs";
 
-import { WorkspaceType } from "../../src";
-import { StoreEnvVar } from "./constants";
+import { WorkspaceType } from "../../../src";
+import { StoreEnvVar } from "../constants";
+import { readJsonSync } from "../utils";
 
 export type DashboardScenario = {
     identifier: string;
@@ -22,13 +23,13 @@ function detectDashboards(rootDir: string, workspaceType: WorkspaceType): Dashbo
         "dashboards",
         "dashboards.json",
     );
+
     if (!fs.existsSync(dir)) {
         return [];
     }
 
     try {
-        const dashboardsRaw = fs.readFileSync(dir, { encoding: "utf8" });
-        const dashboards = JSON.parse(dashboardsRaw);
+        const dashboards = readJsonSync(dir);
         return Object.keys(dashboards).map(
             (key): DashboardScenario => ({
                 identifier: key,

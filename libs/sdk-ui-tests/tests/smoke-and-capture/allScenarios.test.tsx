@@ -4,7 +4,7 @@ import flatMap from "lodash/flatMap";
 import unionBy from "lodash/unionBy";
 import isArray from "lodash/isArray";
 import isObject from "lodash/isObject";
-import { defFingerprint, idRef, IInsight, IInsightDefinition, insightTitle } from "@gooddata/sdk-model";
+import { defFingerprint, IInsight, IInsightDefinition, insightTitle } from "@gooddata/sdk-model";
 import * as fs from "fs";
 import * as path from "path";
 import allScenarios from "../../scenarios";
@@ -16,8 +16,6 @@ import { mountInsight } from "../_infra/renderPlugVis";
 import { storeDirectoryFor } from "./store";
 import { readJsonSync, writeAsJsonSync } from "./utils";
 import { DataViewRequests, RecordingFiles, ScenarioDescriptor } from "@gooddata/mock-handling";
-import { mountDashboard } from "../_infra/renderDashboard";
-import { DashboardScenario, getDashboardScenarios } from "./dashboardScenarioFactory";
 
 type AllScenariosType = [string, IScenario<any>];
 
@@ -255,31 +253,6 @@ function scenarioStoreInsight(scenario: IScenario<any>, def: IInsightDefinition)
  */
 const PlugVisUnsupported: string[] = [];
 
-// eslint-disable-next-line jest/no-focused-tests
-describe.only("dashboardView", () => {
-    // it("works", async () => {
-    //     const interactions = await mountDashboard(idRef("aaRaEZRWdRpQ", "analyticalDashboard"));
-    //     // eslint-disable-next-line no-console
-    //     console.log(JSON.stringify(interactions, null, 2));
-    // });
-
-    const allScenarios = getDashboardScenarios();
-    if (!allScenarios) {
-        return;
-    }
-
-    type Scenario = [DashboardScenario, string];
-    const Scenarios: Scenario[] = flatMap(Object.keys(allScenarios), (key): Scenario[] => {
-        return allScenarios[key].map((s: DashboardScenario) => [s, key]);
-    });
-
-    it.each(Scenarios)("should load %p from %s", async (scenario) => {
-        const interactions = await mountDashboard(idRef(scenario.identifier, "analyticalDashboard"));
-        // eslint-disable-next-line no-console
-        console.log("XXX", scenario.identifier, JSON.stringify(interactions, null, 2));
-    });
-});
-
 describe("all scenarios", () => {
     const Scenarios: AllScenariosType[] = flatMap(allScenarios, (s): AllScenariosType[] => {
         const testInputs: Array<IScenario<any>> = s.asScenarioList();
@@ -287,7 +260,7 @@ describe("all scenarios", () => {
         return testInputs.map((t) => {
             return [t.fullyQualifiedName, t];
         });
-    }).slice(0, 1);
+    });
 
     it.each(Scenarios)("%s should lead to execution", async (_scenarioFqn, scenario) => {
         const interactions = await mountChartAndCaptureNormalized(scenario);

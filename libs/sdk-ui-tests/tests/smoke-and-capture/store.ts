@@ -83,7 +83,22 @@ export function storeDirectoryFor(
     scenario: IScenario<any>,
     defType: SupportedDefinitionTypes,
 ): string | undefined {
-    return Stores && Stores[defType][scenario.workspaceType];
+    return storeDirectoryForWorkspace(scenario.workspaceType, defType);
+}
+
+/**
+ * Locates target directory where the recording definition for the provided workspace should be stored. Returns
+ * `undefined` if not possible to determine - for instance of the stores root location is not provided via the
+ * env variable
+ *
+ * @param workspaceType
+ * @param defType
+ */
+export function storeDirectoryForWorkspace(
+    workspaceType: WorkspaceType,
+    defType: SupportedDefinitionTypes,
+): string | undefined {
+    return Stores && Stores[defType][workspaceType];
 }
 
 /*
