@@ -17,6 +17,7 @@ import { storeDirectoryFor } from "./store";
 import { readJsonSync, writeAsJsonSync } from "./utils";
 import { DataViewRequests, RecordingFiles, ScenarioDescriptor } from "@gooddata/mock-handling";
 import { mountDashboard } from "../_infra/renderDashboard";
+import { DashboardScenario, getDashboardScenarios } from "./dashboardScenarioFactory";
 
 type AllScenariosType = [string, IScenario<any>];
 
@@ -256,10 +257,26 @@ const PlugVisUnsupported: string[] = [];
 
 // eslint-disable-next-line jest/no-focused-tests
 describe.only("dashboardView", () => {
-    it("works", async () => {
-        const interactions = await mountDashboard(idRef("aaRaEZRWdRpQ", "analyticalDashboard"));
+    // it("works", async () => {
+    //     const interactions = await mountDashboard(idRef("aaRaEZRWdRpQ", "analyticalDashboard"));
+    //     // eslint-disable-next-line no-console
+    //     console.log(JSON.stringify(interactions, null, 2));
+    // });
+
+    const allScenarios = getDashboardScenarios();
+    if (!allScenarios) {
+        return;
+    }
+
+    type Scenario = [DashboardScenario, string];
+    const Scenarios: Scenario[] = flatMap(Object.keys(allScenarios), (key): Scenario[] => {
+        return allScenarios[key].map((s: DashboardScenario) => [s, key]);
+    });
+
+    it.each(Scenarios)("should load %p from %s", async (scenario) => {
+        const interactions = await mountDashboard(idRef(scenario.identifier, "analyticalDashboard"));
         // eslint-disable-next-line no-console
-        console.log(JSON.stringify(interactions, null, 2));
+        console.log("XXX", scenario.identifier, JSON.stringify(interactions, null, 2));
     });
 });
 

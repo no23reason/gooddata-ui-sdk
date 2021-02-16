@@ -67,7 +67,7 @@ function hybridBackend(recorded: IAnalyticalBackend, dummy: IAnalyticalBackend):
 export function backendWithDashboardCapturing(
     normalize: boolean = false,
 ): [IAnalyticalBackend, Promise<DashboardInteractions>] {
-    type WrappedDashboardInteraction = DashboardInteraction & { done: boolean };
+    type WrappedDashboardInteraction = DashboardInteraction & { done?: boolean };
 
     const allInteractions: DashboardInteractions<WrappedDashboardInteraction> = {
         interactions: {},
@@ -83,6 +83,10 @@ export function backendWithDashboardCapturing(
         const areAllDone = Object.values(allInteractions.interactions).every((i) => i.done);
 
         if (areAllDone) {
+            // get rid of the "done" flag, we do not need it anymore
+            Object.values(allInteractions.interactions).forEach((value) => {
+                delete value.done;
+            });
             dataRequestResolver(allInteractions);
         }
     };

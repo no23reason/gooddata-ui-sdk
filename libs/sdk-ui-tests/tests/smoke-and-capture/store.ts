@@ -4,6 +4,7 @@ import { IScenario, WorkspaceType } from "../../src";
 import process from "process";
 import path from "path";
 import fs from "fs";
+import { StoreEnvVar } from "./constants";
 
 export type SupportedDefinitionTypes = "executions" | "insights";
 
@@ -13,7 +14,6 @@ type DefinitionStores = {
     };
 };
 
-const StoreEnvVar = "GDC_STORE_DEFS";
 const Stores: DefinitionStores | undefined = initializeStores();
 
 function initializeStores(): DefinitionStores | undefined {
