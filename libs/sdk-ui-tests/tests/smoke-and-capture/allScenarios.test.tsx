@@ -256,28 +256,10 @@ const PlugVisUnsupported: string[] = [];
 
 // eslint-disable-next-line jest/no-focused-tests
 describe.only("dashboardView", () => {
-    // Get rid of all the "not wrapped in act" fired by dashboard renderer for some reason (this should be handled by enzyme)
-    // eslint-disable-next-line no-console
-    const originalError = console.error;
-    beforeAll(() => {
-        // eslint-disable-next-line no-console
-        console.error = (...args: string[]) => {
-            if (/Warning.*not wrapped in act/.test(args[0])) {
-                return;
-            }
-            originalError.call(console, ...args);
-        };
-    });
-
-    afterAll(() => {
-        // eslint-disable-next-line no-console
-        console.error = originalError;
-    });
-
     it("works", async () => {
         const interactions = await mountDashboard(idRef("aaRaEZRWdRpQ", "analyticalDashboard"));
         // eslint-disable-next-line no-console
-        console.log(interactions);
+        console.log(JSON.stringify(interactions, null, 2));
     });
 });
 

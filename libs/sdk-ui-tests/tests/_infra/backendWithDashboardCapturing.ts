@@ -62,9 +62,9 @@ function hybridBackend(recorded: IAnalyticalBackend, dummy: IAnalyticalBackend):
 }
 
 /**
- * Creates an instance of backend which captures interactions with the execution service.
+ * Creates an instance of backend which captures interactions of a dashboard with the execution service.
  */
-export function backendWithCapturing(
+export function backendWithDashboardCapturing(
     normalize: boolean = false,
 ): [IAnalyticalBackend, Promise<DashboardInteractions>] {
     type WrappedDashboardInteraction = DashboardInteraction & { done: boolean };
@@ -82,11 +82,7 @@ export function backendWithCapturing(
     const checkEnding = () => {
         const areAllDone = Object.values(allInteractions.interactions).every((i) => i.done);
 
-        console.log("DONE?", allInteractions, areAllDone);
-
         if (areAllDone) {
-            console.log("lets end this!");
-
             dataRequestResolver(allInteractions);
         }
     };
@@ -103,7 +99,6 @@ export function backendWithCapturing(
                 if (allInteractions.interactions[fingerprint]) {
                     return;
                 }
-                console.log("BEFORE", fingerprint);
 
                 allInteractions.interactions[fingerprint] = {
                     triggeredExecution: def,
@@ -122,8 +117,6 @@ export function backendWithCapturing(
                     return;
                 }
 
-                console.log("READALL", fingerprint);
-
                 allInteractions.interactions[fingerprint].dataViewRequests.allData = true;
                 allInteractions.interactions[fingerprint].done = true;
 
@@ -139,8 +132,6 @@ export function backendWithCapturing(
                 if (allInteractions.interactions[fingerprint].done) {
                     return;
                 }
-
-                console.log("READWIN", fingerprint);
 
                 if (!allInteractions.interactions[fingerprint].dataViewRequests.windows) {
                     allInteractions.interactions[fingerprint].dataViewRequests.windows = [];

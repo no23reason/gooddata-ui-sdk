@@ -7,10 +7,9 @@ import {
     DashboardInsightRenderer,
     IDashboardViewProps,
 } from "@gooddata/sdk-ui-ext/dist/internal";
-import { backendWithCapturing, DashboardInteractions } from "./backendWithCapturing2";
+import { backendWithDashboardCapturing, DashboardInteractions } from "./backendWithDashboardCapturing";
 import { mount, ReactWrapper } from "enzyme";
 
-// TODO RAIL-2870 how to pass this inside of the DashboardView and there to InsightRenderer without messing up the API?
 class DashboardRendererUsingEnzyme {
     public result: ReactWrapper | undefined;
 
@@ -19,14 +18,9 @@ class DashboardRendererUsingEnzyme {
     }
 }
 
-// const waitForAsync = () => new Promise((resolve: (...args: any[]) => void) => setImmediate(resolve));
-
-async function waitForComponentToPaint<P = {}>(wrapper: ReactWrapper<P>) {
+async function waitForComponentToPaint<P = any>(wrapper: ReactWrapper<P>) {
     await act(async () => {
-        console.log("PRE PROM");
-
         await new Promise((resolve) => setImmediate(resolve));
-        console.log("POST PROM");
         wrapper.update();
     });
 }
@@ -37,7 +31,7 @@ const MockComponent = () => <div />;
  * Mount dashboard representing a particular test scenario.
  */
 export async function mountDashboard(ref: ObjRef): Promise<DashboardInteractions> {
-    const [backend, promisedInteractions] = backendWithCapturing();
+    const [backend, promisedInteractions] = backendWithDashboardCapturing();
 
     /*
      * Mapbox token flies in through IGdcConfig; some value is needed for mock-rendering of
@@ -79,24 +73,7 @@ export async function mountDashboard(ref: ObjRef): Promise<DashboardInteractions
         />,
     );
 
-    console.log("PRE WAIT");
-
     await waitForComponentToPaint(x);
-
-    console.log("POST WAIT");
-    // for (let i = 0; i < 2; i++) {
-    //     // eslint-disable-next-line no-console
-    //     // console.log("AAAA", x.debug());
-
-    //     console.log("WAITING FOR ASYNC", i);
-
-    //     await waitForAsync();
-    //     x.update();
-    // }
-
-    // console.log("AAAA", x.debug());
-
-    console.log("DONE??", promisedInteractions);
 
     const interactions = await promisedInteractions;
 
