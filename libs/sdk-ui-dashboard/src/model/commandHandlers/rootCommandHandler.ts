@@ -9,6 +9,7 @@ import { dateFilterChangeSelectionCommandHandler } from "./dateFilter/handler";
 import {
     attributeFilterChangeSelectionCommandHandler,
     attributeFilterAddCommandHandler,
+    attributeFilterRemoveCommandHandler,
 } from "./attributeFilter/handler";
 
 const DefaultCommandHandlers = {
@@ -19,7 +20,7 @@ const DefaultCommandHandlers = {
     "GDC.DASH/CMD.RENAME": unhandledCommand,
     "GDC.DASH/CMD.DATE_FILTER.CHANGE_SELECTION": dateFilterChangeSelectionCommandHandler,
     "GDC.DASH/CMD.ATTRIBUTE_FILTER.ADD": attributeFilterAddCommandHandler,
-    "GDC.DASH/CMD.ATTRIBUTE_FILTER.REMOVE": unhandledCommand,
+    "GDC.DASH/CMD.ATTRIBUTE_FILTER.REMOVE": attributeFilterRemoveCommandHandler,
     "GDC.DASH/CMD.ATTRIBUTE_FILTER.MOVE": unhandledCommand,
     "GDC.DASH/CMD.ATTRIBUTE_FILTER.CHANGE_SELECTION": attributeFilterChangeSelectionCommandHandler,
     "GDC.DASH/CMD.ATTRIBUTE_FILTER.SET_PARENT": unhandledCommand,

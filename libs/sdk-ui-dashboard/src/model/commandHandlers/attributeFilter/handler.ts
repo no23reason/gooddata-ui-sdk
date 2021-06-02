@@ -1,6 +1,10 @@
 // (C) 2021 GoodData Corporation
 import { put } from "redux-saga/effects";
-import { ChangeAttributeFilterSelection, AddAttributeFilter } from "../../commands/filters";
+import {
+    ChangeAttributeFilterSelection,
+    AddAttributeFilter,
+    RemoveAttributeFilters,
+} from "../../commands/filters";
 import { filterContextActions } from "../../state/filterContext";
 import { DashboardContext } from "../../types/commonTypes";
 
@@ -8,11 +12,12 @@ export function* attributeFilterChangeSelectionCommandHandler(
     _ctx: DashboardContext,
     cmd: ChangeAttributeFilterSelection,
 ) {
+    const { elements, filterLocalId, selectionType } = cmd.payload;
     yield put(
         filterContextActions.updateAttributeFilterSelection({
-            elements: cmd.payload.elements,
-            filterLocalId: cmd.payload.filterLocalId,
-            negativeSelection: cmd.payload.selectionType === "NOT_IN",
+            elements,
+            filterLocalId,
+            negativeSelection: selectionType === "NOT_IN",
         }),
     );
 }
@@ -26,6 +31,15 @@ export function* attributeFilterAddCommandHandler(_ctx: DashboardContext, cmd: A
             initialIsNegativeSelection,
             initialSelection,
             parentFilters,
+        }),
+    );
+}
+
+export function* attributeFilterRemoveCommandHandler(_ctx: DashboardContext, cmd: RemoveAttributeFilters) {
+    const { filterLocalIds } = cmd.payload;
+    yield put(
+        filterContextActions.removeAttributeFilters({
+            filterLocalIds,
         }),
     );
 }
