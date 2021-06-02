@@ -4,6 +4,7 @@ import {
     ChangeAttributeFilterSelection,
     AddAttributeFilter,
     RemoveAttributeFilters,
+    MoveAttributeFilter,
 } from "../../commands/filters";
 import { filterContextActions } from "../../state/filterContext";
 import { DashboardContext } from "../../types/commonTypes";
@@ -40,6 +41,16 @@ export function* attributeFilterRemoveCommandHandler(_ctx: DashboardContext, cmd
     yield put(
         filterContextActions.removeAttributeFilters({
             filterLocalIds,
+        }),
+    );
+}
+
+export function* attributeFilterMoveCommandHandler(_ctx: DashboardContext, cmd: MoveAttributeFilter) {
+    const { filterLocalId, index } = cmd.payload;
+    yield put(
+        filterContextActions.moveAttributeFilter({
+            filterLocalId,
+            index,
         }),
     );
 }
