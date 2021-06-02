@@ -11,6 +11,7 @@ import {
     attributeFilterAddCommandHandler,
     attributeFilterRemoveCommandHandler,
     attributeFilterMoveCommandHandler,
+    attributeFilterSetParentCommandHandler,
 } from "./attributeFilter/handler";
 
 const DefaultCommandHandlers = {
@@ -24,7 +25,7 @@ const DefaultCommandHandlers = {
     "GDC.DASH/CMD.ATTRIBUTE_FILTER.REMOVE": attributeFilterRemoveCommandHandler,
     "GDC.DASH/CMD.ATTRIBUTE_FILTER.MOVE": attributeFilterMoveCommandHandler,
     "GDC.DASH/CMD.ATTRIBUTE_FILTER.CHANGE_SELECTION": attributeFilterChangeSelectionCommandHandler,
-    "GDC.DASH/CMD.ATTRIBUTE_FILTER.SET_PARENT": unhandledCommand,
+    "GDC.DASH/CMD.ATTRIBUTE_FILTER.SET_PARENT": attributeFilterSetParentCommandHandler,
     "GDC.DASH/CMD.FLUID_LAYOUT.ADD_SECTION": unhandledCommand,
     "GDC.DASH/CMD.FLUID_LAYOUT.MOVE_SECTION": unhandledCommand,
     "GDC.DASH/CMD.FLUID_LAYOUT.REMOVE_SECTION": unhandledCommand,
