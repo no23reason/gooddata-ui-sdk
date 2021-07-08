@@ -4,6 +4,8 @@
 
 ```ts
 
+/// <reference types="react" />
+
 import { AttributeMeasureOrPlaceholder } from '@gooddata/sdk-ui';
 import { AttributeOrPlaceholder } from '@gooddata/sdk-ui';
 import { AttributesMeasuresOrPlaceholders } from '@gooddata/sdk-ui';
@@ -21,6 +23,7 @@ import { ISettings } from '@gooddata/sdk-backend-spi';
 import { ITheme } from '@gooddata/sdk-backend-spi';
 import { IVisualizationCallbacks } from '@gooddata/sdk-ui';
 import { IVisualizationProps } from '@gooddata/sdk-ui';
+import { LodashIsEqual1x1 } from 'lodash/fp';
 import { MeasureOrPlaceholder } from '@gooddata/sdk-ui';
 import { MeasuresOrPlaceholders } from '@gooddata/sdk-ui';
 import { NullableFiltersOrPlaceholders } from '@gooddata/sdk-ui';
@@ -393,16 +396,16 @@ export interface IPieChartProps extends IBucketChartProps, IPieChartBucketProps 
 }
 
 // @internal (undocumented)
-export const isAreaChart: import("lodash/fp").LodashIsEqual1x1;
+export const isAreaChart: LodashIsEqual1x1;
 
 // @internal (undocumented)
-export const isBarChart: import("lodash/fp").LodashIsEqual1x1;
+export const isBarChart: LodashIsEqual1x1;
 
 // @internal (undocumented)
-export const isBubbleChart: import("lodash/fp").LodashIsEqual1x1;
+export const isBubbleChart: LodashIsEqual1x1;
 
 // @internal (undocumented)
-export const isBulletChart: import("lodash/fp").LodashIsEqual1x1;
+export const isBulletChart: LodashIsEqual1x1;
 
 // @public (undocumented)
 export interface IScatterPlotBucketProps {
@@ -419,31 +422,31 @@ export interface IScatterPlotProps extends IBucketChartProps, IScatterPlotBucket
 }
 
 // @internal (undocumented)
-export const isColumnChart: import("lodash/fp").LodashIsEqual1x1;
+export const isColumnChart: LodashIsEqual1x1;
 
 // @internal (undocumented)
 export const isComboChart: (type: string) => boolean;
 
 // @internal (undocumented)
-export const isDonutChart: import("lodash/fp").LodashIsEqual1x1;
+export const isDonutChart: LodashIsEqual1x1;
 
 // @internal (undocumented)
-export const isHeatmap: import("lodash/fp").LodashIsEqual1x1;
+export const isHeatmap: LodashIsEqual1x1;
 
 // @internal (undocumented)
-export const isLineChart: import("lodash/fp").LodashIsEqual1x1;
+export const isLineChart: LodashIsEqual1x1;
 
 // @internal (undocumented)
-export const isPieChart: import("lodash/fp").LodashIsEqual1x1;
+export const isPieChart: LodashIsEqual1x1;
 
 // @internal (undocumented)
 export const isPieOrDonutChart: (type: string) => boolean;
 
 // @internal (undocumented)
-export const isScatterPlot: import("lodash/fp").LodashIsEqual1x1;
+export const isScatterPlot: LodashIsEqual1x1;
 
 // @internal (undocumented)
-export const isTreemap: import("lodash/fp").LodashIsEqual1x1;
+export const isTreemap: LodashIsEqual1x1;
 
 // @public
 export interface ITooltipConfig {
@@ -510,6 +513,5 @@ export const withJsxExport: <T extends object>(Component: React_2.ComponentType<
 
 // @beta
 export const Xirr: (props: IXirrProps) => JSX.Element;
-
 
 ```
