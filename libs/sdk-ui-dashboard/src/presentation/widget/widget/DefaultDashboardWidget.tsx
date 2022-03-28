@@ -18,14 +18,12 @@ import {
     widgetExecutionStarted,
     widgetExecutionSucceeded,
 } from "../../../model/events/widget";
-import { IDashboardWidgetProps } from "./types";
+import { CustomDashboardWidgetComponent, IDashboardWidgetProps } from "./types";
 import { DashboardKpi } from "../kpi/DashboardKpi";
 import { DefaultDashboardInsightWidget } from "./DefaultDashboardInsightWidget";
+import { renderModeAware } from "../../util";
 
-/**
- * @internal
- */
-export const DefaultDashboardWidget = (props: IDashboardWidgetProps): JSX.Element => {
+const DefaultDashboardWidgetViewMode = (props: IDashboardWidgetProps): JSX.Element => {
     const {
         onError,
         onFiltersChange,
@@ -107,3 +105,10 @@ export const DefaultDashboardWidget = (props: IDashboardWidgetProps): JSX.Elemen
 
     return <div>Unknown widget</div>;
 };
+
+/**
+ * @internal
+ */
+export const DefaultDashboardWidget = renderModeAware<CustomDashboardWidgetComponent>({
+    ViewComponent: DefaultDashboardWidgetViewMode,
+});

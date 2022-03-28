@@ -1937,7 +1937,7 @@ export const DefaultDashboardLayout: (props: IDashboardLayoutProps) => JSX.Eleme
 export const defaultDashboardThemeModifier: (theme: ITheme) => ITheme;
 
 // @internal (undocumented)
-export const DefaultDashboardWidget: (props: IDashboardWidgetProps) => JSX.Element;
+export const DefaultDashboardWidget: React_2.ComponentType<React_2.PropsWithChildren<IDashboardWidgetProps> | (IDashboardWidgetProps & React_2.RefAttributes<React_2.Component<IDashboardWidgetProps, any, any>>)>;
 
 // @alpha (undocumented)
 export const DefaultFilterBar: (props: IFilterBarProps) => JSX.Element;
