@@ -82,11 +82,11 @@ interface CreatableComponent {
     DrawerItem: ComponentType;
 }
 
-interface WithCreatingPlaceholder {
+interface CreatableSkeletonComponent {
     /**
      * Component used to render the item before the initial configuration is done.
      */
-    CreatingPlaceholder: ComponentType;
+    CreatingSkeleton: ComponentType;
 }
 
 /**
@@ -95,7 +95,7 @@ interface WithCreatingPlaceholder {
 
 type AttributeFilterComponentSet = CustomComponentBase<IDashboardAttributeFilterProps> &
     DraggableComponent &
-    WithCreatingPlaceholder &
+    CreatableSkeletonComponent &
     CreatableComponent;
 
 const attributeFilterComponentSet: AttributeFilterComponentSet = {
@@ -107,14 +107,14 @@ const attributeFilterComponentSet: AttributeFilterComponentSet = {
 type KpiWidgetComponentSet = CustomComponentBase<IDashboardKpiProps> &
     DraggableComponent &
     CreatableComponent &
-    WithCreatingPlaceholder &
+    CreatableSkeletonComponent &
     ConfigurableWidget;
 
 const kpiWidgetComponentSet: KpiWidgetComponentSet = {
     Main: DefaultDashboardKpi,
     Dragging: () => <div>dragging the KPI somewhere</div>,
     DrawerItem: () => <div>showing the drawer item for KPI in the left drawer</div>,
-    CreatingPlaceholder: () => (
+    CreatingSkeleton: () => (
         <div>
             KPI placeholder shown while it is configured for the first time after being dropped in the layout
         </div>
@@ -137,7 +137,7 @@ const mockGetKpiComponentSet = (): KpiWidgetComponentSet => kpiWidgetComponentSe
 const KpiCreatingPlaceholder = () => {
     const componentSet = mockGetKpiComponentSet();
     // the given component knows which of the items in teh component set it wants
-    const { CreatingPlaceholder } = componentSet;
+    const { CreatingSkeleton: CreatingPlaceholder } = componentSet;
 
     return <CreatingPlaceholder />;
 };
