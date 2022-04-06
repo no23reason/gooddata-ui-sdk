@@ -35,6 +35,8 @@ export function renderModeAware<T extends ComponentType<any>>(components: {
 //
 //
 
+type DragTarget = "layout" | "filterBar";
+
 /**
  * There is more nuance to be considered here, the edit mode for a component/widget is not a single component,
  * rather a set of different components related to each other. Below is the proposed mechanism to specify these sets.
@@ -48,7 +50,7 @@ interface DashboardRenderModeAwareProps {
 
 interface CustomComponentBase<TMainProps> {
     /**
-     * The main body of the component
+     * The main body of the component that is shown by default in view and edit modes.
      */
     Main: ComponentType<TMainProps & DashboardRenderModeAwareProps>;
 }
@@ -57,17 +59,34 @@ interface DraggingProps {
     // TODO
 }
 
+/**
+ * Capability saying the component can be dragged somewhere.
+ */
 interface DraggableComponent {
     /**
      * Component shown when it is being dragged somewhere.
      */
     Dragging: ComponentType<DraggingProps>;
+    /**
+     * Where can the component be dragged to.
+     */
+    dragTargets: DragTarget[] | ((props: DraggingProps) => DragTarget[]);
+}
+
+/**
+ * Capability saying the component can receive draggable items.
+ */
+interface DragReceiver {
+    DraggedOnto: ComponentType<DraggingProps>;
 }
 
 interface WidgetConfigPanelProps {
     // TODO
 }
 
+/**
+ * Capability saying the component can be configured in edit mode.
+ */
 interface ConfigurableWidget {
     /**
      * Component used to render the insides of the configuration panel.
@@ -75,14 +94,20 @@ interface ConfigurableWidget {
     ConfigPanel: ComponentType<WidgetConfigPanelProps>;
 }
 
-interface CreatableComponent {
+/**
+ * Capability saying the component can be created by dragging it from the side drawer.
+ */
+interface CreatableComponent extends DraggableComponent {
     /**
      * Component used to render the item in the left drawer menu used to create a new instance of this component on the dashboard
      */
     DrawerItem: ComponentType;
 }
 
-interface CreatableSkeletonComponent {
+/**
+ * Capability saying the component displays something else than the Main component while it is being configured for the first time after being created.
+ */
+interface CreatableSkeletonComponent extends CreatableComponent {
     /**
      * Component used to render the item before the initial configuration is done.
      */
