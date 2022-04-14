@@ -12,6 +12,7 @@ import {
     RangeConditionOperator,
     IRankingFilter,
     RankingFilterOperator,
+    IFilter,
 } from "./index";
 import { attributeDisplayFormRef, IAttribute, isAttribute, attributeLocalId } from "../attribute";
 import { Identifier, isObjRef, LocalIdRef, ObjRef, ObjRefInScope } from "../../objRef";
@@ -362,3 +363,160 @@ export function newRankingFilter(
 
     throw new Error("Ranking filter requires measure, operator and value");
 }
+
+type FilterOperator =
+    | "IN"
+    | "NOT_IN"
+    | "IN_RELATIVE_DATE_RANGE"
+    | "IN_ABSOLUTE_DATE_RANGE"
+    | ComparisonConditionOperator
+    | RangeConditionOperator
+    | RankingFilterOperator;
+
+/* eslint-disable prefer-spread */
+
+function newFilter(
+    operator: "IN",
+    attributeOrRef: IAttribute | ObjRef | Identifier,
+    inValues: IAttributeElements | string[],
+): IPositiveAttributeFilter;
+function newFilter(
+    operator: "NOT_IN",
+    attributeOrRef: IAttribute | ObjRef | Identifier,
+    notInValues: IAttributeElements | string[],
+): INegativeAttributeFilter;
+function newFilter(
+    operator: "IN_RELATIVE_DATE_RANGE",
+    dateDataSet: ObjRef | Identifier,
+    granularity: DateAttributeGranularity,
+    from: number,
+    to: number,
+): IRelativeDateFilter;
+function newFilter(
+    operator: "IN_ABSOLUTE_DATE_RANGE",
+    dateDataSet: ObjRef | Identifier,
+    from: string,
+    to: string,
+): IAbsoluteDateFilter;
+function newFilter(
+    operator: ComparisonConditionOperator,
+    measureOrRef: IMeasure | ObjRefInScope | string,
+    value: number,
+    treatNullValuesAs?: number,
+): IMeasureValueFilter;
+function newFilter(
+    operator: RangeConditionOperator,
+    measureOrRef: IMeasure | ObjRefInScope | LocalIdRef | string,
+    from: number,
+    to: number,
+    treatNullValuesAs?: number,
+): IMeasureValueFilter;
+function newFilter(
+    operator: RankingFilterOperator,
+    measureOrRef: IMeasure | ObjRefInScope | string,
+    attributesOrRefs: Array<IAttribute | ObjRefInScope | string>,
+    value: number,
+): IRankingFilter;
+function newFilter(
+    operator: RankingFilterOperator,
+    measureOrRef: IMeasure | ObjRefInScope | string,
+    value: number,
+): IRankingFilter;
+
+function newFilter(operator: FilterOperator, ...values: any[]): IFilter {
+    switch (operator) {
+        case "IN":
+            return newPositiveAttributeFilter.apply(null, values as any);
+        case "NOT_IN":
+            return newNegativeAttributeFilter.apply(null, values as any);
+        case "IN_RELATIVE_DATE_RANGE":
+            return newRelativeDateFilter.apply(null, values as any);
+        case "IN_ABSOLUTE_DATE_RANGE":
+            return newAbsoluteDateFilter.apply(null, values as any);
+        case "EQUAL_TO":
+        case "NOT_EQUAL_TO":
+        case "GREATER_THAN":
+        case "GREATER_THAN_OR_EQUAL_TO":
+        case "LESS_THAN":
+        case "LESS_THAN_OR_EQUAL_TO":
+            return newMeasureValueFilter(values[0], operator, values[1], values[2]);
+        case "BETWEEN":
+        case "NOT_BETWEEN":
+            return newMeasureValueFilter(values[0], operator, values[1], values[2], values[3]);
+        case "TOP":
+        case "BOTTOM":
+            return values.length === 2
+                ? newRankingFilter(values[0], operator, values[1])
+                : newRankingFilter(values[0], values[1], operator, values[2]);
+
+        default:
+            throw new Error(`Unsupported filter operator ${operator}`);
+    }
+}
+
+const x = newFilter("IN", "attr", []);
+const y = newFilter("BETWEEN", "attr", 5, 50, 100);
+const z = newFilter("TOP", { identifier: "measure" }, 5);
+
+//
+//
+//
+
+type PositiveFilterTuple = [
+    operator: "IN",
+    attributeOrRef: IAttribute | ObjRef | Identifier,
+    inValues: IAttributeElements | string[],
+];
+type NegativeFilterTuple = [
+    operator: "NOT_IN",
+    attributeOrRef: IAttribute | ObjRef | Identifier,
+    notInValues: IAttributeElements | string[],
+];
+
+type RelativeDateFilterTuple = [
+    operator: "IN_RELATIVE_DATE_RANGE",
+    dateDataSet: ObjRef | Identifier,
+    granularity: DateAttributeGranularity,
+    from: number,
+    to: number,
+];
+type AbsoluteDateFilterTuple = [
+    operator: "IN_ABSOLUTE_DATE_RANGE",
+    dateDataSet: ObjRef | Identifier,
+    from: string,
+    to: string,
+];
+
+type FilterTuple =
+    | PositiveFilterTuple
+    | NegativeFilterTuple
+    | RelativeDateFilterTuple
+    | AbsoluteDateFilterTuple;
+
+function newFilter2(...args: PositiveFilterTuple): IPositiveAttributeFilter;
+function newFilter2(...args: NegativeFilterTuple): INegativeAttributeFilter;
+function newFilter2(...args: RelativeDateFilterTuple): IRelativeDateFilter;
+function newFilter2(...args: AbsoluteDateFilterTuple): IAbsoluteDateFilter;
+function newFilter2(...args: FilterTuple): IFilter {
+    const [operator] = args;
+    switch (operator) {
+        case "IN": {
+            const [, ...params] = args as PositiveFilterTuple;
+            return newPositiveAttributeFilter(...params);
+        }
+        case "NOT_IN": {
+            const [, ...params] = args as NegativeFilterTuple;
+            return newNegativeAttributeFilter(...params);
+        }
+        case "IN_RELATIVE_DATE_RANGE": {
+            const [, ...params] = args as RelativeDateFilterTuple;
+            return newRelativeDateFilter(...params);
+        }
+        case "IN_ABSOLUTE_DATE_RANGE": {
+            const [, ...params] = args as AbsoluteDateFilterTuple;
+            return newAbsoluteDateFilter(...params);
+        }
+    }
+}
+
+const a = newFilter2("IN_RELATIVE_DATE_RANGE", "data", "GDC.time.date", 5, 6);
