@@ -42,44 +42,13 @@ import { WrappedComponentProps } from 'react-intl';
 // @public
 export type AbsoluteDateFilterOption = IUiAbsoluteDateFilterForm | IAbsoluteDateFilterPreset;
 
-// @public
-export const AttributeElements: React_2.ComponentType<IAttributeElementsProps>;
-
 // @internal (undocumented)
-export interface AttributeElementSelection {
-    // (undocumented)
-    isInverted: boolean;
-    // (undocumented)
-    items: string[];
-}
-
-// @internal (undocumented)
-export interface AttributeElementSelectionFull {
-    // (undocumented)
-    elements: IAttributeElement[];
-    // (undocumented)
-    isInverted: boolean;
-}
-
-// @public
-export const AttributeFilter: React_2.ComponentType<IAttributeFilterProps>;
-
-// @public (undocumented)
-export const AttributeFilterButton: React_2.FC<IAttributeFilterButtonOwnProps>;
-
-// @internal (undocumented)
-export class AttributeFilterHandler implements IAttributeFilterHandler {
+export abstract class AbstractAttributeFilterHandler implements IAttributeFilterHandler {
     constructor(config: IAttributeFilterHandlerConfig);
     // (undocumented)
     cancelDisplayFormInfoLoad: () => void;
     // (undocumented)
     cancelElementLoad(): void;
-    // (undocumented)
-    changeSelection: (selection: AttributeElementSelection) => void;
-    // (undocumented)
-    clearSelection: () => void;
-    // (undocumented)
-    commitSelection: () => void;
     // (undocumented)
     protected displayForm: ObjRef;
     // (undocumented)
@@ -87,9 +56,11 @@ export class AttributeFilterHandler implements IAttributeFilterHandler {
     // (undocumented)
     protected elementLoader: IAttributeElementLoader;
     // (undocumented)
+    protected ensureSelectionLoaded: (selection: AttributeElementSelection, correlation: Correlation) => void;
+    // (undocumented)
     getAllItems: () => IAttributeElement[];
     // (undocumented)
-    getCommittedSelection: () => AttributeElementSelection;
+    protected abstract getCommittedAttributeElementsSelection(): AttributeElementSelection;
     // (undocumented)
     getCountWithCurrentSettings: () => number;
     // (undocumented)
@@ -107,9 +78,9 @@ export class AttributeFilterHandler implements IAttributeFilterHandler {
     // (undocumented)
     getTotalCount: () => number;
     // (undocumented)
-    getWorkingSelection: () => AttributeElementSelection;
+    protected abstract getWorkingAttributeElementsSelection(): AttributeElementSelection;
     // (undocumented)
-    invertSelection: () => void;
+    protected init: (selection: AttributeElementSelection) => void;
     // (undocumented)
     protected isElementsByRef: boolean;
     // (undocumented)
@@ -141,16 +112,6 @@ export class AttributeFilterHandler implements IAttributeFilterHandler {
     // (undocumented)
     onElementsRangeLoadSuccess: CallbackRegistration<IElementsLoadResult>;
     // (undocumented)
-    onSelectionChanged: CallbackRegistration<{
-        selection: AttributeElementSelection;
-    }>;
-    // (undocumented)
-    onSelectionCommitted: CallbackRegistration<{
-        selection: AttributeElementSelection;
-    }>;
-    // (undocumented)
-    revertSelection: () => void;
-    // (undocumented)
     setLimitingAttributeFilters: (filters: IElementsQueryAttributeFilter[], correlation?: Correlation) => void;
     // (undocumented)
     setLimitingDateFilters: (filters: IRelativeDateFilter[], correlation?: Correlation) => void;
@@ -158,9 +119,32 @@ export class AttributeFilterHandler implements IAttributeFilterHandler {
     setLimitingMeasures: (measures: IMeasure[], correlation?: Correlation) => void;
     // (undocumented)
     setSearch: (search: string, correlation?: Correlation) => void;
-    // (undocumented)
-    protected stagedSelectionHandler: IStagedAttributeElementsSelectionHandler;
 }
+
+// @public
+export const AttributeElements: React_2.ComponentType<IAttributeElementsProps>;
+
+// @internal (undocumented)
+export interface AttributeElementSelection {
+    // (undocumented)
+    isInverted: boolean;
+    // (undocumented)
+    items: string[];
+}
+
+// @internal (undocumented)
+export interface AttributeElementSelectionFull {
+    // (undocumented)
+    elements: IAttributeElement[];
+    // (undocumented)
+    isInverted: boolean;
+}
+
+// @public
+export const AttributeFilter: React_2.ComponentType<IAttributeFilterProps>;
+
+// @public (undocumented)
+export const AttributeFilterButton: React_2.FC<IAttributeFilterButtonOwnProps>;
 
 // @alpha (undocumented)
 export class AttributeFilterLoader {
@@ -315,6 +299,17 @@ export class DefaultAttributeElementsSelectionHandler implements IAttributeEleme
 export const defaultDateFilterOptions: IDateFilterOptionsByType;
 
 // @internal (undocumented)
+export class DefaultSingleAttributeElementSelectionHandler implements ISingleAttributeElementSelectionHandler {
+    constructor(selection?: string | undefined);
+    // (undocumented)
+    changeSelection: (selection: string | undefined) => void;
+    // (undocumented)
+    clearSelection: () => void;
+    // (undocumented)
+    getSelection: () => string | undefined;
+}
+
+// @internal (undocumented)
 export class DefaultStagedAttributeElementsSelectionHandler implements IStagedAttributeElementsSelectionHandler {
     constructor(initialSelection?: AttributeElementSelection);
     // (undocumented)
@@ -343,6 +338,35 @@ export class DefaultStagedAttributeElementsSelectionHandler implements IStagedAt
     revertSelection: (correlation?: Correlation) => void;
     // (undocumented)
     protected workingSelectionHandler: IAttributeElementsSelectionHandler;
+}
+
+// @internal (undocumented)
+export class DefaultStagedSingleAttributeElementSelectionHandler implements IStagedSingleAttributeElementSelectionHandler {
+    constructor(initialSelection: string | undefined);
+    // (undocumented)
+    changeSelection: (selection: string | undefined, correlation?: Correlation) => void;
+    // (undocumented)
+    clearSelection: () => void;
+    // (undocumented)
+    commitSelection: (correlation?: Correlation) => void;
+    // (undocumented)
+    protected committedSelectionHandler: ISingleAttributeElementSelectionHandler;
+    // (undocumented)
+    getCommittedSelection: () => string | undefined;
+    // (undocumented)
+    getWorkingSelection: () => string | undefined;
+    // (undocumented)
+    onSelectionChanged: CallbackRegistration<{
+        selection: string | undefined;
+    }>;
+    // (undocumented)
+    onSelectionCommitted: CallbackRegistration<{
+        selection: string | undefined;
+    }>;
+    // (undocumented)
+    revertSelection: (correlation?: Correlation) => void;
+    // (undocumented)
+    protected workingSelectionHandler: ISingleAttributeElementSelectionHandler;
 }
 
 // @internal (undocumented)
@@ -591,7 +615,7 @@ export interface IAttributeFilterButtonOwnProps {
 export type IAttributeFilterButtonProps = IAttributeFilterButtonOwnProps & WrappedComponentProps;
 
 // @internal
-export interface IAttributeFilterHandler extends IAttributeDisplayFormLoader, IAttributeElementLoader, IStagedAttributeElementsSelectionHandler {
+export interface IAttributeFilterHandler extends IAttributeDisplayFormLoader, IAttributeElementLoader {
     getFilter(): IAttributeFilter;
     getSelectedItems(): AttributeElementSelectionFull;
 }
@@ -875,6 +899,14 @@ export const isAbsoluteDateFilterOption: (obj: unknown) => obj is AbsoluteDateFi
 // @public (undocumented)
 export const isEmptyListItem: (item: Partial<AttributeListItem>) => item is EmptyListItem;
 
+// @internal
+export interface ISingleAttributeElementSelectionHandler {
+    // (undocumented)
+    changeSelection(selection: string | undefined): void;
+    // (undocumented)
+    getSelection(): string | undefined;
+}
+
 // @public (undocumented)
 export const isNonEmptyListItem: (item: Partial<AttributeListItem>) => item is IAttributeElement;
 
@@ -895,6 +927,24 @@ export interface IStagedAttributeElementsSelectionHandler extends Omit<IAttribut
     // (undocumented)
     onSelectionCommitted: CallbackRegistration<{
         selection: AttributeElementSelection;
+    }>;
+    revertSelection(): void;
+}
+
+// @internal
+export interface IStagedSingleAttributeElementSelectionHandler extends Omit<ISingleAttributeElementSelectionHandler, "getSelection"> {
+    commitSelection(): void;
+    // (undocumented)
+    getCommittedSelection(): string | undefined;
+    // (undocumented)
+    getWorkingSelection(): string | undefined;
+    // (undocumented)
+    onSelectionChanged: CallbackRegistration<{
+        selection: string | undefined;
+    }>;
+    // (undocumented)
+    onSelectionCommitted: CallbackRegistration<{
+        selection: string | undefined;
     }>;
     revertSelection(): void;
 }
@@ -973,6 +1023,39 @@ export class MeasureValueFilterDropdown extends React_2.PureComponent<IMeasureVa
     render(): React_2.ReactNode;
 }
 
+// @internal (undocumented)
+export class MultiSelectStagedAttributeFilterHandler extends AbstractAttributeFilterHandler implements IAttributeFilterHandler, IStagedAttributeElementsSelectionHandler {
+    constructor(config: IAttributeFilterHandlerConfig);
+    // (undocumented)
+    changeSelection: (selection: AttributeElementSelection) => void;
+    // (undocumented)
+    clearSelection: () => void;
+    // (undocumented)
+    commitSelection: () => void;
+    // (undocumented)
+    protected getCommittedAttributeElementsSelection: () => AttributeElementSelection;
+    // (undocumented)
+    getCommittedSelection: () => AttributeElementSelection;
+    // (undocumented)
+    protected getWorkingAttributeElementsSelection: () => AttributeElementSelection;
+    // (undocumented)
+    getWorkingSelection: () => AttributeElementSelection;
+    // (undocumented)
+    invertSelection: () => void;
+    // (undocumented)
+    onSelectionChanged: CallbackRegistration<{
+        selection: AttributeElementSelection;
+    }>;
+    // (undocumented)
+    onSelectionCommitted: CallbackRegistration<{
+        selection: AttributeElementSelection;
+    }>;
+    // (undocumented)
+    revertSelection: () => void;
+    // (undocumented)
+    protected stagedSelectionHandler: IStagedAttributeElementsSelectionHandler;
+}
+
 // @beta (undocumented)
 export const RankingFilter: React_2.FC<IRankingFilterProps>;
 
@@ -981,6 +1064,37 @@ export const RankingFilterDropdown: React_2.FC<IRankingFilterDropdownProps>;
 
 // @public
 export type RelativeDateFilterOption = IUiRelativeDateFilterForm | IRelativeDateFilterPreset;
+
+// @internal (undocumented)
+export class SingleSelectStagedAttributeFilterHandler extends AbstractAttributeFilterHandler implements IAttributeFilterHandler, IStagedSingleAttributeElementSelectionHandler {
+    constructor(config: IAttributeFilterHandlerConfig);
+    // (undocumented)
+    changeSelection: (selection: string | undefined) => void;
+    // (undocumented)
+    commitSelection: () => void;
+    // (undocumented)
+    protected getCommittedAttributeElementsSelection: () => AttributeElementSelection;
+    // (undocumented)
+    getCommittedSelection: () => string | undefined;
+    // (undocumented)
+    getSelectedItem: () => IAttributeElement | undefined;
+    // (undocumented)
+    protected getWorkingAttributeElementsSelection: () => AttributeElementSelection;
+    // (undocumented)
+    getWorkingSelection: () => string | undefined;
+    // (undocumented)
+    onSelectionChanged: CallbackRegistration<{
+        selection: string | undefined;
+    }>;
+    // (undocumented)
+    onSelectionCommitted: CallbackRegistration<{
+        selection: string | undefined;
+    }>;
+    // (undocumented)
+    revertSelection: () => void;
+    // (undocumented)
+    protected stagedSelectionHandler: IStagedSingleAttributeElementSelectionHandler;
+}
 
 // @internal (undocumented)
 export type Unsubscribe = () => void;
