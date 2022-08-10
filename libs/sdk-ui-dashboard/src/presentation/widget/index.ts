@@ -10,6 +10,8 @@ export {
     UseCustomWidgetExecutionDataViewCallbacks,
     UseCustomWidgetInsightDataViewCallbacks,
     UseInsightWidgetInsightDataViewCallbacks,
+    useWidgetSelection,
+    IUseWidgetSelectionResult,
 } from "./common";
 
 export * from "./insight";

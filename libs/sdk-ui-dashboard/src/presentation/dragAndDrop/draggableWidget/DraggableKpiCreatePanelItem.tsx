@@ -1,40 +1,43 @@
 // (C) 2022 GoodData Corporation
-import React from "react";
+import React, { useMemo } from "react";
 
 import { uiActions, selectIsInEditMode, useDashboardDispatch, useDashboardSelector } from "../../../model";
-import { useDashboardDrag } from "../useDashboardDrag";
-import {
-    CustomDashboardKpiCreatePanelItemComponent,
-    CustomDashboardKpiCreatePanelItemComponentProps,
-} from "../types";
+import { CustomDashboardKpiCreatePanelItemComponent, DraggableItem } from "../types";
+import { DraggableCreatePanelItem, IDraggableCreatePanelItemProps } from "../DraggableCreatePanelItem";
 
-type DraggableKpiCreatePanelItemProps = {
+interface IDraggableKpiCreatePanelItemProps {
     CreatePanelItemComponent: CustomDashboardKpiCreatePanelItemComponent;
-    createPanelItemComponentProps: CustomDashboardKpiCreatePanelItemComponentProps;
+    disabled?: boolean;
+}
+
+const dragItem: DraggableItem = {
+    type: "kpi-placeholder",
 };
 
-export const DraggableKpiCreatePanelItem: React.FC<DraggableKpiCreatePanelItemProps> = ({
+export const DraggableKpiCreatePanelItem: React.FC<IDraggableKpiCreatePanelItemProps> = ({
     CreatePanelItemComponent,
-    createPanelItemComponentProps,
+    disabled,
 }) => {
     const dispatch = useDashboardDispatch();
     const isInEditMode = useDashboardSelector(selectIsInEditMode);
 
-    const [, dragRef] = useDashboardDrag({
-        dragItem: {
-            type: "kpi-placeholder",
-        },
-        canDrag: isInEditMode && !createPanelItemComponentProps.disabled,
-        hideDefaultPreview: false,
-        dragEnd: (_, monitor) => {
-            if (!monitor.didDrop()) {
+    const handleDragEnd = useMemo<IDraggableCreatePanelItemProps["onDragEnd"]>(
+        () => (didDrop) => {
+            if (!didDrop) {
                 dispatch(uiActions.clearWidgetPlaceholder());
             }
         },
-    });
+        [dispatch],
+    );
+
     return (
-        <div ref={dragRef}>
-            <CreatePanelItemComponent {...createPanelItemComponentProps} />
-        </div>
+        <DraggableCreatePanelItem
+            Component={CreatePanelItemComponent}
+            disabled={disabled}
+            canDrag={isInEditMode && !disabled}
+            dragItem={dragItem}
+            hideDefaultPreview={false}
+            onDragEnd={handleDragEnd}
+        />
     );
 };

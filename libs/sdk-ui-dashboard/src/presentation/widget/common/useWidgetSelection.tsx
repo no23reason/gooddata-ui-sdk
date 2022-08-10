@@ -10,6 +10,9 @@ import {
     useDashboardSelector,
 } from "../../../model";
 
+/**
+ * @internal
+ */
 export interface IUseWidgetSelectionResult {
     /**
      * Flag indicating the given item can be selected.
@@ -33,6 +36,9 @@ export interface IUseWidgetSelectionResult {
     hasConfigPanelOpen: boolean;
 }
 
+/**
+ * @internal
+ */
 export function useWidgetSelection(widgetRef: ObjRef | undefined): IUseWidgetSelectionResult {
     const dispatch = useDashboardDispatch();
 
