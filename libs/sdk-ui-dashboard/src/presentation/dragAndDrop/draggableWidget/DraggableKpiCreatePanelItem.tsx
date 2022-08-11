@@ -1,7 +1,13 @@
 // (C) 2022 GoodData Corporation
 import React, { useMemo } from "react";
 
-import { uiActions, selectIsInEditMode, useDashboardDispatch, useDashboardSelector } from "../../../model";
+import {
+    selectIsInEditMode,
+    useDashboardDispatch,
+    useDashboardSelector,
+    eagerRemoveSectionItem,
+    selectWidgetPlaceholder,
+} from "../../../model";
 import { CustomDashboardKpiCreatePanelItemComponent, DraggableItem } from "../types";
 import { DraggableCreatePanelItem, IDraggableCreatePanelItemProps } from "../DraggableCreatePanelItem";
 
@@ -21,13 +27,15 @@ export const DraggableKpiCreatePanelItem: React.FC<IDraggableKpiCreatePanelItemP
     const dispatch = useDashboardDispatch();
     const isInEditMode = useDashboardSelector(selectIsInEditMode);
 
+    const widgetPlaceholder = useDashboardSelector(selectWidgetPlaceholder);
+
     const handleDragEnd = useMemo<IDraggableCreatePanelItemProps["onDragEnd"]>(
         () => (didDrop) => {
-            if (!didDrop) {
-                dispatch(uiActions.clearWidgetPlaceholder());
+            if (!didDrop && widgetPlaceholder) {
+                dispatch(eagerRemoveSectionItem(widgetPlaceholder.sectionIndex, widgetPlaceholder.itemIndex));
             }
         },
-        [dispatch],
+        [dispatch, widgetPlaceholder],
     );
 
     return (

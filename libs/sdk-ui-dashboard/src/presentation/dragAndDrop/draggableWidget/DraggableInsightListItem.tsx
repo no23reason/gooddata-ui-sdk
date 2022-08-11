@@ -3,7 +3,13 @@ import React from "react";
 import classNames from "classnames";
 import { IInsight } from "@gooddata/sdk-model";
 
-import { useDashboardSelector, selectIsInEditMode, useDashboardDispatch, uiActions } from "../../../model";
+import {
+    useDashboardSelector,
+    selectIsInEditMode,
+    useDashboardDispatch,
+    eagerRemoveSectionItem,
+    selectWidgetPlaceholder,
+} from "../../../model";
 import { useDashboardDrag } from "../useDashboardDrag";
 import {
     CustomDashboardInsightListItemComponent,
@@ -29,6 +35,7 @@ export function DraggableInsightListItem({
 }: IDraggableInsightListItemProps) {
     const dispatch = useDashboardDispatch();
     const isInEditMode = useDashboardSelector(selectIsInEditMode);
+    const widgetPlaceholder = useDashboardSelector(selectWidgetPlaceholder);
 
     const [{ isDragging }, dragRef] = useDashboardDrag(
         {
@@ -39,12 +46,14 @@ export function DraggableInsightListItem({
             canDrag: isInEditMode,
             hideDefaultPreview: false,
             dragEnd: (_, monitor) => {
-                if (!monitor.didDrop()) {
-                    dispatch(uiActions.clearWidgetPlaceholder());
+                if (!monitor.didDrop() && widgetPlaceholder) {
+                    dispatch(
+                        eagerRemoveSectionItem(widgetPlaceholder.sectionIndex, widgetPlaceholder.itemIndex),
+                    );
                 }
             },
         },
-        [isInEditMode, insight],
+        [isInEditMode, insight, widgetPlaceholder],
     );
 
     return (

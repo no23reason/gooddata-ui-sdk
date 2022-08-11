@@ -3665,7 +3665,7 @@ export type InsightPlaceholderDraggableItem = {
 // @alpha (undocumented)
 export interface InsightPlaceholderWidget extends ICustomWidget {
     // (undocumented)
-    readonly customType: "insightPlaceholder";
+    readonly customType: "gd-insight-placeholder";
     // (undocumented)
     readonly isLastInSection: boolean;
     // (undocumented)
@@ -4165,24 +4165,6 @@ export interface IUseWidgetSelectionResult {
 }
 
 // @alpha (undocumented)
-export interface IWidgetPlaceholderSpec {
-    // (undocumented)
-    itemIndex: number;
-    // (undocumented)
-    sectionIndex: number;
-    // (undocumented)
-    size: {
-        width: number;
-        height: number;
-    };
-    // (undocumented)
-    type: IWidgetPlaceholderType;
-}
-
-// @alpha (undocumented)
-export type IWidgetPlaceholderType = "widget" | "insight" | "kpi";
-
-// @alpha (undocumented)
 export interface IXlsxExportConfig {
     // (undocumented)
     format: "xlsx";
@@ -4216,7 +4198,7 @@ export type KpiPlaceholderDraggableItem = {
 // @alpha (undocumented)
 export interface KpiPlaceholderWidget extends ICustomWidget {
     // (undocumented)
-    readonly customType: "kpiPlaceholder";
+    readonly customType: "gd-kpi-placeholder";
     // (undocumented)
     readonly isLastInSection: boolean;
     // (undocumented)
@@ -4522,7 +4504,7 @@ export const PLACEHOLDER_WIDGET_ID = "__placeholder__";
 // @alpha (undocumented)
 export interface PlaceholderWidget extends ICustomWidget {
     // (undocumented)
-    readonly customType: "placeholder";
+    readonly customType: "gd-widget-placeholder";
     // (undocumented)
     readonly isLastInSection: boolean;
     // (undocumented)
@@ -5452,11 +5434,14 @@ export const selectInsights: (state: DashboardState) => IInsight[];
 // @alpha
 export const selectInsightsMap: OutputSelector<DashboardState, ObjRefMap<IInsight>, (res1: IInsight[], res2: IBackendCapabilities) => ObjRefMap<IInsight>>;
 
+// @internal (undocumented)
+export const selectInsightWidgetPlaceholder: OutputSelector<DashboardState, InsightPlaceholderWidget | undefined, (res: ICustomWidget[]) => InsightPlaceholderWidget | undefined>;
+
 // @internal
 export const selectIsCircularDependency: (currentFilterLocalId: string, neighborFilterLocalid: string) => OutputSelector<DashboardState, boolean, (res: string[]) => boolean>;
 
 // @internal
-export const selectIsDashboardDirty: OutputSelector<DashboardState, boolean, (res1: boolean, res2: IDashboardLayout<ExtendedDashboardWidget>, res3: boolean, res4: boolean, res5: boolean) => boolean>;
+export const selectIsDashboardDirty: OutputSelector<DashboardState, boolean, (res1: boolean, res2: IDashboardLayout<IWidget>, res3: boolean, res4: boolean, res5: boolean) => boolean>;
 
 // @internal (undocumented)
 export const selectIsDashboardLoading: OutputSelector<DashboardState, boolean, (res: LoadingState) => boolean>;
@@ -5530,14 +5515,14 @@ export const selectIsShareDialogOpen: OutputSelector<DashboardState, boolean, (r
 // @internal
 export const selectIsWhiteLabeled: OutputSelector<DashboardState, boolean, (res: ResolvedDashboardConfig) => boolean>;
 
-// @alpha (undocumented)
-export const selectIsWidgetPlaceholderShown: OutputSelector<DashboardState, boolean, (res: IWidgetPlaceholderSpec | undefined) => boolean>;
-
 // @internal (undocumented)
 export const selectKpiDateDatasetAutoOpen: OutputSelector<DashboardState, boolean, (res: UiState) => boolean>;
 
 // @internal (undocumented)
 export const selectKpiDeleteDialogWidgetCoordinates: OutputSelector<DashboardState, ILayoutCoordinates | undefined, (res: UiState) => ILayoutCoordinates | undefined>;
+
+// @internal (undocumented)
+export const selectKpiWidgetPlaceholder: OutputSelector<DashboardState, KpiPlaceholderWidget | undefined, (res: ICustomWidget[]) => KpiPlaceholderWidget | undefined>;
 
 // @alpha
 export const selectLayout: OutputSelector<DashboardState, IDashboardLayout<ExtendedDashboardWidget>, (res: LayoutState) => IDashboardLayout<ExtendedDashboardWidget>>;
@@ -5629,8 +5614,8 @@ export const selectWidgetCoordinatesByRef: (ref: ObjRef) => OutputSelector<Dashb
 // @alpha
 export const selectWidgetDrills: (ref: ObjRef | undefined) => OutputSelector<DashboardState, IDrillToLegacyDashboard[] | InsightDrillDefinition[], (res: IKpiWidget | IInsightWidget | undefined) => IDrillToLegacyDashboard[] | InsightDrillDefinition[]>;
 
-// @alpha (undocumented)
-export const selectWidgetPlaceholder: OutputSelector<DashboardState, IWidgetPlaceholderSpec | undefined, (res: UiState) => IWidgetPlaceholderSpec | undefined>;
+// @internal (undocumented)
+export const selectWidgetPlaceholder: OutputSelector<DashboardState, PlaceholderWidget | undefined, (res: ICustomWidget[]) => PlaceholderWidget | undefined>;
 
 // @internal
 export const selectWidgets: OutputSelector<DashboardState, ExtendedDashboardWidget[], (res: IDashboardLayout<ExtendedDashboardWidget>) => ExtendedDashboardWidget[]>;
@@ -5816,11 +5801,6 @@ setKpiDateDatasetAutoOpen: CaseReducer<UiState, {
 payload: boolean;
 type: string;
 }>;
-setWidgetPlaceholder: CaseReducer<UiState, {
-payload: IWidgetPlaceholderSpec;
-type: string;
-}>;
-clearWidgetPlaceholder: CaseReducer<UiState, AnyAction>;
 requestInsightListUpdate: CaseReducer<UiState, AnyAction>;
 }>;
 
@@ -5872,8 +5852,6 @@ export interface UiState {
     shareDialog: {
         open: boolean;
     };
-    // (undocumented)
-    widgetPlaceholder: IWidgetPlaceholderSpec | undefined;
 }
 
 // @alpha
