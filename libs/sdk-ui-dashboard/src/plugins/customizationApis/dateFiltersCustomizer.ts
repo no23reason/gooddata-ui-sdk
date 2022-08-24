@@ -6,7 +6,7 @@ import {
     OptionalDateFilterComponentProvider,
 } from "../../presentation";
 import { InvariantError } from "ts-invariant";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 
 const DefaultDateFilterRendererProvider: DateFilterComponentProvider = () => {
     return DefaultDashboardDateFilter;
@@ -87,13 +87,13 @@ class DefaultDateFiltersCustomizerState implements IDateFiltersCustomizerState {
  */
 class SealedDateFiltersCustomizerState implements IDateFiltersCustomizerState {
     constructor(
-        private readonly logger: IDashboardCustomizationLogger,
+        private readonly context: IDashboardCustomizationContext,
         private readonly state: IDateFiltersCustomizerState,
     ) {}
 
     public addCustomProvider = (_provider: DateFilterComponentProvider): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(
+        this.context.warn(
             `Attempting to customize DateFilter rendering outside of plugin registration. Ignoring.`,
         );
     };
@@ -101,7 +101,7 @@ class SealedDateFiltersCustomizerState implements IDateFiltersCustomizerState {
     // eslint-disable-next-line sonarjs/no-identical-functions
     public switchRootProvider = (_provider: DateFilterComponentProvider): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(
+        this.context.warn(
             `Attempting to customize DateFilter rendering outside of plugin registration. Ignoring.`,
         );
     };
@@ -123,14 +123,14 @@ class SealedDateFiltersCustomizerState implements IDateFiltersCustomizerState {
  * @internal
  */
 export class DefaultDateFiltersCustomizer implements IDateFiltersCustomizer {
-    private readonly logger: IDashboardCustomizationLogger;
+    private readonly context: IDashboardCustomizationContext;
     private state: IDateFiltersCustomizerState;
 
     constructor(
-        logger: IDashboardCustomizationLogger,
+        context: IDashboardCustomizationContext,
         defaultProvider: DateFilterComponentProvider = DefaultDateFilterRendererProvider,
     ) {
-        this.logger = logger;
+        this.context = context;
         this.state = new DefaultDateFiltersCustomizerState(defaultProvider);
     }
 
@@ -172,6 +172,6 @@ export class DefaultDateFiltersCustomizer implements IDateFiltersCustomizer {
     };
 
     public sealCustomizer = (): void => {
-        this.state = new SealedDateFiltersCustomizerState(this.logger, this.state);
+        this.state = new SealedDateFiltersCustomizerState(this.context, this.state);
     };
 }

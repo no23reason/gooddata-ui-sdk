@@ -1,6 +1,6 @@
-// (C) 2021 GoodData Corporation
+// (C) 2021-2022 GoodData Corporation
 
-import { DashboardCustomizationLogger } from "../customizationLogging";
+import { DashboardCustomizationContext } from "../customizationContext";
 import { DefaultWidgetCustomizer } from "../widgetCustomizer";
 import React from "react";
 import { ICustomWidget } from "../../../model";
@@ -28,7 +28,7 @@ describe("widget customizer", () => {
     let Customizer: DefaultWidgetCustomizer;
 
     beforeEach(() => {
-        Customizer = new DefaultWidgetCustomizer(new DashboardCustomizationLogger());
+        Customizer = new DefaultWidgetCustomizer(new DashboardCustomizationContext());
     });
 
     it("should correctly handle multiple custom widget types", () => {

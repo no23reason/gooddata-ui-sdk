@@ -1,15 +1,15 @@
 // (C) 2021-2022 GoodData Corporation
 import { FluidLayoutCustomizationFn, IDashboardLayoutCustomizer } from "../customizer";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 import { FluidLayoutCustomizer } from "./fluidLayoutCustomizer";
-import { IDashboardLayout } from "@gooddata/sdk-model";
-import { DashboardTransformFn, ExtendedDashboardWidget } from "../../model";
+import { DashboardLayoutReadOnlyAdditions, DashboardReadOnlyAdditionsFactory } from "../../model";
+import { evaluateDashboardReadOnlyAdditions } from "../../_staging/dashboard/evaluateDashboardReadOnlyAdditions";
 
 export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
     private sealed = false;
     private readonly fluidLayoutTransformations: FluidLayoutCustomizationFn[] = [];
 
-    constructor(private readonly logger: IDashboardCustomizationLogger) {}
+    constructor(private readonly context: IDashboardCustomizationContext) {}
 
     public customizeFluidLayout = (
         customizationFn: FluidLayoutCustomizationFn,
@@ -17,7 +17,7 @@ export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
         if (!this.sealed) {
             this.fluidLayoutTransformations.push(customizationFn);
         } else {
-            this.logger.warn(
+            this.context.warn(
                 `Attempting to add layout customization outside of plugin registration. Ignoring.`,
             );
         }
@@ -31,12 +31,14 @@ export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
         return this;
     };
 
-    public getExistingDashboardTransformFn = (): DashboardTransformFn => {
+    public getReadOnlyAdditionsFactory = (): DashboardReadOnlyAdditionsFactory => {
         const snapshot = [...this.fluidLayoutTransformations];
-
         return (dashboard) => {
             const { layout } = dashboard;
-
+            const emptyAdditions: DashboardLayoutReadOnlyAdditions = {
+                items: [],
+                sections: [],
+            };
             /*
              * Once the dashboard component supports multiple layout types, then the code here must only
              * perform the transformations applicable for the dashboard's layout type..
@@ -45,39 +47,43 @@ export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
              * layout in a dashboard and is of expected type. This condition will be always true for
              * non-empty, non-corrupted dashboards
              */
-
             if (!layout || layout.type !== "IDashboardLayout") {
-                return undefined;
+                return emptyAdditions;
             }
 
-            const newLayout = snapshot.reduce((currentLayout, fn) => {
-                // Create a new fluid layout customizer just for this round of processing
-                const customizer = new FluidLayoutCustomizer(this.logger);
+            const res = snapshot.reduce(
+                (acc, fn) => {
+                    const customizer = new FluidLayoutCustomizer(this.context);
+                    const { layout: currentLayout, additions } = acc;
+                    try {
+                        // call out to the plugin-provided function with the current value of the layout & the
+                        // customizer to use. the custom function may now inspect the layout & use the customizer
+                        // to add sections or items. customizer will not reflect those changes immediately. instead
+                        // it will accumulate those operations
+                        fn(currentLayout, customizer);
+                        // now make extract the addition definitions from the customizer
+                        const newAdditions = customizer.getReadOnlyAdditions();
+                        return {
+                            // apply the transformations so that subsequent factories "see" the updated layout
+                            layout: evaluateDashboardReadOnlyAdditions(currentLayout, newAdditions)!,
+                            additions: {
+                                items: [...additions.items, ...newAdditions.items],
+                                sections: [...additions.sections, ...newAdditions.sections],
+                            },
+                        };
+                    } catch (e) {
+                        this.context.error(
+                            "An error has occurred while transforming fluid dashboard layout. Skipping failed transformation.",
+                            e,
+                        );
 
-                try {
-                    // call out to the plugin-provided function with the current value of the layout & the
-                    // customizer to use. the custom function may now inspect the layout & use the customizer
-                    // to add sections or items. customizer will not reflect those changes immediately. instead
-                    // it will accumulate those operations
-                    fn(currentLayout, customizer);
-                    // now make the customizer apply the registered layout modifications; this is done so that
-                    // customizer can guarantee that all new items are added at first (keeping the original
-                    // section indexes) and only then new sections are added
-                    return customizer.applyTransformations(currentLayout);
-                } catch (e) {
-                    this.logger.error(
-                        "An error has occurred while transforming fluid dashboard layout. Skipping failed transformation.",
-                        e,
-                    );
+                        return acc;
+                    }
+                },
+                { layout, additions: emptyAdditions },
+            );
 
-                    return currentLayout;
-                }
-            }, layout as IDashboardLayout<ExtendedDashboardWidget>);
-
-            return {
-                ...dashboard,
-                layout: newLayout,
-            };
+            return res.additions;
         };
     };
 }

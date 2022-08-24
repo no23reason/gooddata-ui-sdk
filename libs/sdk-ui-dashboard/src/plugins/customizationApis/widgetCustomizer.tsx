@@ -1,7 +1,7 @@
 // (C) 2021-2022 GoodData Corporation
 
 import { IDashboardWidgetCustomizer } from "../customizer";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 import { CustomDashboardWidgetComponent, OptionalWidgetComponentProvider } from "../../presentation";
 import { isCustomWidget } from "../../model";
 
@@ -35,11 +35,11 @@ interface IWidgetCustomizerState {
 class WidgetCustomizerState implements IWidgetCustomizerState {
     private readonly customWidgetMap: CustomWidgetMap = new Map();
 
-    constructor(private readonly logger: IDashboardCustomizationLogger) {}
+    constructor(private readonly context: IDashboardCustomizationContext) {}
 
     public addDefinition = (definition: IDashboardWidgetDefinition): void => {
         if (this.customWidgetMap.has(definition.widgetType)) {
-            this.logger.warn(
+            this.context.warn(
                 `Redefining custom widget type ${definition.widgetType}. Previous definition will be discarded.`,
             );
         }
@@ -55,11 +55,11 @@ class WidgetCustomizerState implements IWidgetCustomizerState {
 class SealedCustomizerState implements IWidgetCustomizerState {
     constructor(
         private readonly state: IWidgetCustomizerState,
-        private readonly logger: IDashboardCustomizationLogger,
+        private readonly context: IDashboardCustomizationContext,
     ) {}
 
     public addDefinition = (_definition: IDashboardWidgetDefinition): void => {
-        this.logger.warn(`Attempting to add custom widgets outside of plugin registration. Ignoring.`);
+        this.context.warn(`Attempting to add custom widgets outside of plugin registration. Ignoring.`);
     };
 
     public getCustomWidgetMap = (): CustomWidgetMap => {
@@ -68,9 +68,9 @@ class SealedCustomizerState implements IWidgetCustomizerState {
 }
 
 export class DefaultWidgetCustomizer implements IDashboardWidgetCustomizer {
-    private state: IWidgetCustomizerState = new WidgetCustomizerState(this.logger);
+    private state: IWidgetCustomizerState = new WidgetCustomizerState(this.context);
 
-    constructor(private readonly logger: IDashboardCustomizationLogger) {}
+    constructor(private readonly context: IDashboardCustomizationContext) {}
 
     public addCustomWidget = (
         widgetType: string,
@@ -85,7 +85,7 @@ export class DefaultWidgetCustomizer implements IDashboardWidgetCustomizer {
     };
 
     public sealCustomizer = (): IDashboardWidgetCustomizer => {
-        this.state = new SealedCustomizerState(this.state, this.logger);
+        this.state = new SealedCustomizerState(this.state, this.context);
 
         return this;
     };

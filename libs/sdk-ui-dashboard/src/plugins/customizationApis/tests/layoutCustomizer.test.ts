@@ -1,6 +1,6 @@
 // (C) 2021-2022 GoodData Corporation
 
-import { DashboardCustomizationLogger } from "../customizationLogging";
+import { DashboardCustomizationContext } from "../customizationContext";
 import { DefaultLayoutCustomizer } from "../layoutCustomizer";
 import { ExtendedDashboardWidget } from "../../../model";
 import { idRef, IDashboard } from "@gooddata/sdk-model";
@@ -25,15 +25,15 @@ describe("layout customizer", () => {
     let Customizer: DefaultLayoutCustomizer;
 
     beforeEach(() => {
-        Customizer = new DefaultLayoutCustomizer(new DashboardCustomizationLogger());
+        Customizer = new DefaultLayoutCustomizer(new DashboardCustomizationContext());
     });
 
     it("should allow fluid layout customization and deal with transform returning undefined", () => {
         const customizationFn = jest.fn();
         Customizer.customizeFluidLayout(customizationFn);
-        const transformFn = Customizer.getExistingDashboardTransformFn();
+        const factory = Customizer.getReadOnlyAdditionsFactory();
 
-        expect(transformFn(EmptyDashboard)).toEqual(EmptyDashboard);
+        expect(factory(EmptyDashboard)).toMatchSnapshot();
         expect(customizationFn).toHaveBeenCalledTimes(1);
     });
 
@@ -42,9 +42,9 @@ describe("layout customizer", () => {
         const customizationFn2 = jest.fn();
         Customizer.customizeFluidLayout(customizationFn1);
         Customizer.customizeFluidLayout(customizationFn2);
-        const transformFn = Customizer.getExistingDashboardTransformFn();
+        const factory = Customizer.getReadOnlyAdditionsFactory();
 
-        expect(transformFn(EmptyDashboard)).toEqual(EmptyDashboard);
+        expect(factory(EmptyDashboard)).toMatchSnapshot();
         expect(customizationFn1).toHaveBeenCalledTimes(1);
         expect(customizationFn2).toHaveBeenCalledTimes(1);
     });
@@ -53,17 +53,17 @@ describe("layout customizer", () => {
         Customizer.customizeFluidLayout(() => {
             throw Error();
         });
-        const transformFn = Customizer.getExistingDashboardTransformFn();
+        const factory = Customizer.getReadOnlyAdditionsFactory();
 
-        expect(transformFn(EmptyDashboard)).toEqual(EmptyDashboard);
+        expect(factory(EmptyDashboard)).toMatchSnapshot();
     });
 
-    it("should return undefined if dashboard has no layout", () => {
+    it("should return empty additions if dashboard has no layout", () => {
         const DashboardWithNoLayout = { ...EmptyDashboard, layout: undefined };
         const customizationFn = jest.fn();
         Customizer.customizeFluidLayout(customizationFn);
-        const transformFn = Customizer.getExistingDashboardTransformFn();
+        const factory = Customizer.getReadOnlyAdditionsFactory();
 
-        expect(transformFn(DashboardWithNoLayout)).toBeUndefined();
+        expect(factory(DashboardWithNoLayout)).toMatchSnapshot();
     });
 });

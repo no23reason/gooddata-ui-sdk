@@ -25,6 +25,12 @@ export {
     IResolvedAttributeFilterValues,
     IResolvedDateFilterValue,
     IResolvedFilterValues,
+    AddReadonlyLayoutItem,
+    AddReadonlyLayoutSection,
+    DashboardLayoutReadOnlyAdditions,
+    DashboardReadOnlyAdditionsFactory,
+    DashboardLayoutReadOnlyAdditionSource,
+    DashboardLayoutReadOnlyAdditionBase,
 } from "./types/commonTypes";
 export {
     ICustomWidget,

@@ -9,7 +9,7 @@ import { recordedInsight } from "@gooddata/sdk-backend-mockingbird";
 import { ReferenceRecordings } from "@gooddata/reference-workspace";
 
 import { DefaultInsightCustomizer } from "../insightCustomizer";
-import { DashboardCustomizationLogger } from "../customizationLogging";
+import { DashboardCustomizationContext } from "../customizationContext";
 
 import {
     IDashboardInsightProps,
@@ -114,7 +114,7 @@ describe("insight customizer", () => {
 
     beforeEach(() => {
         Customizer = new DefaultInsightCustomizer(
-            new DashboardCustomizationLogger(),
+            new DashboardCustomizationContext(),
             DefaultTestComponentProvider,
         );
     });
@@ -154,10 +154,10 @@ describe("insight customizer", () => {
         });
 
         it("should print a warning if tag is an empty string", () => {
-            const logger = new DashboardCustomizationLogger();
-            const customizer = new DefaultInsightCustomizer(logger, DefaultTestComponentProvider);
+            const context = new DashboardCustomizationContext();
+            const customizer = new DefaultInsightCustomizer(context, DefaultTestComponentProvider);
 
-            const consoleSpy = jest.spyOn(logger, "warn");
+            const consoleSpy = jest.spyOn(context, "warn");
 
             customizer.withTag("", createTestComponent("forTag1"));
 

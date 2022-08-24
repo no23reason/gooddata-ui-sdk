@@ -11,7 +11,7 @@ import { ReferenceMd } from "@gooddata/reference-workspace";
 import { render } from "@testing-library/react";
 import invariant from "ts-invariant";
 import { DefaultKpiCustomizer } from "../kpiCustomizer";
-import { DashboardCustomizationLogger } from "../customizationLogging";
+import { DashboardCustomizationContext } from "../customizationContext";
 
 //
 //
@@ -110,7 +110,7 @@ describe("KPI customizer", () => {
 
     beforeEach(() => {
         Customizer = new DefaultKpiCustomizer(
-            new DashboardCustomizationLogger(),
+            new DashboardCustomizationContext(),
             DefaultTestComponentProvider,
         );
     });

@@ -6,7 +6,7 @@ import {
     OptionalAttributeFilterComponentProvider,
 } from "../../presentation";
 import { InvariantError } from "ts-invariant";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 
 const DefaultAttributeFilterRendererProvider: AttributeFilterComponentProvider = () => {
     return DefaultDashboardAttributeFilter;
@@ -87,13 +87,13 @@ class DefaultAttributeFiltersCustomizerState implements IAttributeFiltersCustomi
  */
 class SealedAttributeFiltersCustomizerState implements IAttributeFiltersCustomizerState {
     constructor(
-        private readonly logger: IDashboardCustomizationLogger,
+        private readonly context: IDashboardCustomizationContext,
         private readonly state: IAttributeFiltersCustomizerState,
     ) {}
 
     public addCustomProvider = (_provider: AttributeFilterComponentProvider): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(
+        this.context.warn(
             `Attempting to customize AttributeFilter rendering outside of plugin registration. Ignoring.`,
         );
     };
@@ -101,7 +101,7 @@ class SealedAttributeFiltersCustomizerState implements IAttributeFiltersCustomiz
     // eslint-disable-next-line sonarjs/no-identical-functions
     public switchRootProvider = (_provider: AttributeFilterComponentProvider): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(
+        this.context.warn(
             `Attempting to customize AttributeFilter rendering outside of plugin registration. Ignoring.`,
         );
     };
@@ -123,14 +123,14 @@ class SealedAttributeFiltersCustomizerState implements IAttributeFiltersCustomiz
  * @internal
  */
 export class DefaultAttributeFiltersCustomizer implements IAttributeFiltersCustomizer {
-    private readonly logger: IDashboardCustomizationLogger;
+    private readonly context: IDashboardCustomizationContext;
     private state: IAttributeFiltersCustomizerState;
 
     constructor(
-        logger: IDashboardCustomizationLogger,
+        context: IDashboardCustomizationContext,
         defaultProvider: AttributeFilterComponentProvider = DefaultAttributeFilterRendererProvider,
     ) {
-        this.logger = logger;
+        this.context = context;
         this.state = new DefaultAttributeFiltersCustomizerState(defaultProvider);
     }
 
@@ -174,6 +174,6 @@ export class DefaultAttributeFiltersCustomizer implements IAttributeFiltersCusto
     };
 
     public sealCustomizer = (): void => {
-        this.state = new SealedAttributeFiltersCustomizerState(this.logger, this.state);
+        this.state = new SealedAttributeFiltersCustomizerState(this.context, this.state);
     };
 }

@@ -1,7 +1,7 @@
 // (C) 2022 GoodData Corporation
 import { CustomFilterBarComponent, HiddenFilterBar } from "../../presentation";
 import { FilterBarRenderingMode, IFilterBarCustomizer } from "../customizer";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 
 interface IFilterBarCustomizerState {
     setRenderingMode(mode: FilterBarRenderingMode): void;
@@ -15,7 +15,7 @@ interface IFilterBarCustomizerResult {
 class FilterBarCustomizerState implements IFilterBarCustomizerState {
     private renderingMode: FilterBarRenderingMode | undefined = undefined;
 
-    constructor(private readonly logger: IDashboardCustomizationLogger) {}
+    constructor(private readonly context: IDashboardCustomizationContext) {}
 
     getRenderingMode = (): FilterBarRenderingMode => {
         return this.renderingMode ?? "default";
@@ -23,7 +23,7 @@ class FilterBarCustomizerState implements IFilterBarCustomizerState {
 
     setRenderingMode = (renderingMode: FilterBarRenderingMode): void => {
         if (this.renderingMode) {
-            this.logger.warn(
+            this.context.warn(
                 `Redefining filter bar rendering mode to "${renderingMode}". Previous definition will be discarded.`,
             );
         }
@@ -34,7 +34,7 @@ class FilterBarCustomizerState implements IFilterBarCustomizerState {
 class SealedFilterBarCustomizerState implements IFilterBarCustomizerState {
     constructor(
         private readonly state: IFilterBarCustomizerState,
-        private readonly logger: IDashboardCustomizationLogger,
+        private readonly logger: IDashboardCustomizationContext,
     ) {}
 
     getRenderingMode = (): FilterBarRenderingMode => {
@@ -54,7 +54,7 @@ class SealedFilterBarCustomizerState implements IFilterBarCustomizerState {
 export class DefaultFilterBarCustomizer implements IFilterBarCustomizer {
     private state: IFilterBarCustomizerState = new FilterBarCustomizerState(this.logger);
 
-    constructor(private readonly logger: IDashboardCustomizationLogger) {}
+    constructor(private readonly logger: IDashboardCustomizationContext) {}
 
     setRenderingMode = (mode: FilterBarRenderingMode): this => {
         this.state.setRenderingMode(mode);

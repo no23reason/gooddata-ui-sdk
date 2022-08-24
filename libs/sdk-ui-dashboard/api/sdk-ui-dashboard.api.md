@@ -224,6 +224,24 @@ export interface AddLayoutSectionPayload {
 }
 
 // @alpha
+export interface AddReadonlyLayoutItem extends DashboardLayoutReadOnlyAdditionBase {
+    // (undocumented)
+    item: IDashboardLayoutItem<ICustomWidget>;
+    // (undocumented)
+    itemIndex: number;
+    // (undocumented)
+    sectionIndex: number;
+}
+
+// @alpha
+export interface AddReadonlyLayoutSection extends DashboardLayoutReadOnlyAdditionBase {
+    // (undocumented)
+    index: number;
+    // (undocumented)
+    section: IDashboardLayoutSection<ICustomWidget>;
+}
+
+// @alpha
 export function addSectionItem(sectionIndex: number, itemIndex: number, item: DashboardItemDefinition, autoResolveDateFilterDataset?: boolean, correlationId?: string): AddSectionItems;
 
 // @alpha (undocumented)
@@ -1649,6 +1667,30 @@ export interface DashboardLayoutChangedPayload {
 // @alpha (undocumented)
 export type DashboardLayoutCommands = AddLayoutSection | MoveLayoutSection | RemoveLayoutSection | ChangeLayoutSectionHeader | AddSectionItems | MoveSectionItem | RemoveSectionItem | ResizeHeight;
 
+// @alpha (undocumented)
+export interface DashboardLayoutReadOnlyAdditionBase {
+    // (undocumented)
+    source?: DashboardLayoutReadOnlyAdditionSource;
+}
+
+// @alpha
+export interface DashboardLayoutReadOnlyAdditions {
+    // (undocumented)
+    items: AddReadonlyLayoutItem[];
+    // (undocumented)
+    sections: AddReadonlyLayoutSection[];
+}
+
+// @alpha (undocumented)
+export interface DashboardLayoutReadOnlyAdditionSource {
+    // (undocumented)
+    debugName?: string;
+    // (undocumented)
+    displayName: string;
+    // (undocumented)
+    version: string;
+}
+
 // @alpha
 export interface DashboardLayoutSectionAdded extends IDashboardEvent {
     // (undocumented)
@@ -1783,6 +1825,8 @@ export interface DashboardMetaState {
 // @public (undocumented)
 export interface DashboardModelCustomizationFns {
     existingDashboardTransformFn?: DashboardTransformFn;
+    // @alpha
+    readonlyAdditionsFactory?: DashboardReadOnlyAdditionsFactory;
 }
 
 // @public
@@ -1868,6 +1912,9 @@ export interface DashboardQueryStartedPayload {
 
 // @alpha (undocumented)
 export type DashboardQueryType = "GDC.DASH/QUERY.INSIGHT.DATE.DATASETS" | "GDC.DASH/QUERY.INSIGHT.ATTRIBUTE.META" | "GDC.DASH/QUERY.MEASURE.DATE.DATASETS" | "GDC.DASH/QUERY.WIDGET.FILTERS" | "GDC.DASH/QUERY.WIDGET.BROKEN_ALERTS" | "GDC.DASH/QUERY.WIDGET.ALERT_COUNT";
+
+// @alpha
+export type DashboardReadOnlyAdditionsFactory = (dashboard: IDashboard<ExtendedDashboardWidget>) => DashboardLayoutReadOnlyAdditions;
 
 // @alpha
 export interface DashboardRenamed extends IDashboardEvent {

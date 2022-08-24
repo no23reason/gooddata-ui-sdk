@@ -1,17 +1,17 @@
 // (C) 2021-2022 GoodData Corporation
 import { IFiltersCustomizer } from "../customizer";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 import { DefaultAttributeFiltersCustomizer } from "./attributeFiltersCustomizer";
 import { DefaultDateFiltersCustomizer } from "./dateFiltersCustomizer";
 
 export class DefaultFiltersCustomizer implements IFiltersCustomizer {
     private readonly attributeFiltersCustomizer: DefaultAttributeFiltersCustomizer =
-        new DefaultAttributeFiltersCustomizer(this.logger);
+        new DefaultAttributeFiltersCustomizer(this.context);
     private readonly dateFiltersCustomizer: DefaultDateFiltersCustomizer = new DefaultDateFiltersCustomizer(
-        this.logger,
+        this.context,
     );
 
-    constructor(private readonly logger: IDashboardCustomizationLogger) {}
+    constructor(private readonly context: IDashboardCustomizationContext) {}
 
     public attribute(): DefaultAttributeFiltersCustomizer {
         return this.attributeFiltersCustomizer;

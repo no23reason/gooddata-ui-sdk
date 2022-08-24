@@ -2,7 +2,7 @@
 import { IDashboardKpiCustomizer } from "../customizer";
 import { DefaultDashboardKpi, KpiComponentProvider, OptionalKpiComponentProvider } from "../../presentation";
 import { InvariantError } from "ts-invariant";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 
 const DefaultKpiRendererProvider: KpiComponentProvider = () => {
     return DefaultDashboardKpi;
@@ -83,19 +83,19 @@ class DefaultKpiCustomizerState implements IKpiCustomizerState {
  */
 class SealedKpiCustomizerState implements IKpiCustomizerState {
     constructor(
-        private readonly logger: IDashboardCustomizationLogger,
+        private readonly context: IDashboardCustomizationContext,
         private readonly state: IKpiCustomizerState,
     ) {}
 
     public addCustomProvider = (_provider: KpiComponentProvider): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(`Attempting to customize KPI rendering outside of plugin registration. Ignoring.`);
+        this.context.warn(`Attempting to customize KPI rendering outside of plugin registration. Ignoring.`);
     };
 
     // eslint-disable-next-line sonarjs/no-identical-functions
     public switchRootProvider = (_provider: KpiComponentProvider): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(`Attempting to customize KPI rendering outside of plugin registration. Ignoring.`);
+        this.context.warn(`Attempting to customize KPI rendering outside of plugin registration. Ignoring.`);
     };
 
     public getRootProvider = (): KpiComponentProvider => {
@@ -115,14 +115,14 @@ class SealedKpiCustomizerState implements IKpiCustomizerState {
  * @internal
  */
 export class DefaultKpiCustomizer implements IDashboardKpiCustomizer {
-    private readonly logger: IDashboardCustomizationLogger;
+    private readonly context: IDashboardCustomizationContext;
     private state: IKpiCustomizerState;
 
     constructor(
-        logger: IDashboardCustomizationLogger,
+        context: IDashboardCustomizationContext,
         defaultProvider: KpiComponentProvider = DefaultKpiRendererProvider,
     ) {
-        this.logger = logger;
+        this.context = context;
         this.state = new DefaultKpiCustomizerState(defaultProvider);
     }
 
@@ -164,6 +164,6 @@ export class DefaultKpiCustomizer implements IDashboardKpiCustomizer {
     };
 
     public sealCustomizer = (): void => {
-        this.state = new SealedKpiCustomizerState(this.logger, this.state);
+        this.state = new SealedKpiCustomizerState(this.context, this.state);
     };
 }

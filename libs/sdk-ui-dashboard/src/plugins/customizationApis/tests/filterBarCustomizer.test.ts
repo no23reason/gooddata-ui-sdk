@@ -1,7 +1,7 @@
 // (C) 2022 GoodData Corporation
 import { HiddenFilterBar } from "../../../presentation";
 import { DefaultFilterBarCustomizer } from "../filterBarCustomizer";
-import { TestingDashboardCustomizationLogger } from "./fixtures/TestingDashboardCustomizationLogger";
+import { TestingDashboardCustomizationContext } from "./fixtures/TestingDashboardCustomizationContext";
 
 describe("filter bar customizer", () => {
     let Customizer: DefaultFilterBarCustomizer;
@@ -10,7 +10,7 @@ describe("filter bar customizer", () => {
     beforeEach(() => {
         mockWarn = jest.fn();
         Customizer = new DefaultFilterBarCustomizer(
-            new TestingDashboardCustomizationLogger({ warn: mockWarn }),
+            new TestingDashboardCustomizationContext({ warn: mockWarn }),
         );
     });
 

@@ -38,6 +38,7 @@ import update from "lodash/fp/update";
 import isEmpty from "lodash/isEmpty";
 import { loadFiltersToIndexMapping } from "../initializeDashboardHandler/loadFiltersToIndexMapping";
 import { loadConnectingAttributesMatrix } from "../initializeDashboardHandler/loadConnectingAttributesMatrix";
+import { evaluateDashboardReadOnlyAdditions } from "../../../../_staging/dashboard/evaluateDashboardReadOnlyAdditions";
 
 export const EmptyDashboardLayout: IDashboardLayout<IWidget> = {
     type: "IDashboardLayout",
@@ -146,8 +147,21 @@ export function* actionsToInitializeExistingDashboard(
     const customizedDashboard =
         privateCtx?.existingDashboardTransformFn?.(sanitizedDashboard) ?? sanitizedDashboard;
 
-    const filterContextDefinition = dashboardFilterContextDefinition(customizedDashboard, dateFilterConfig);
-    const filterContextIdentity = dashboardFilterContextIdentity(customizedDashboard);
+    const readonlyAdditions = privateCtx?.readonlyAdditionsFactory?.(sanitizedDashboard);
+    const customizedLayout = readonlyAdditions
+        ? evaluateDashboardReadOnlyAdditions(customizedDashboard.layout, readonlyAdditions)
+        : customizedDashboard.layout;
+
+    const customizedDashboardWithAdditionsResolved: IDashboard<ExtendedDashboardWidget> = {
+        ...customizedDashboard,
+        layout: customizedLayout,
+    };
+
+    const filterContextDefinition = dashboardFilterContextDefinition(
+        customizedDashboardWithAdditionsResolved,
+        dateFilterConfig,
+    );
+    const filterContextIdentity = dashboardFilterContextIdentity(customizedDashboardWithAdditionsResolved);
     const attributeFilterDisplayForms = yield call(
         resolveFilterDisplayForms,
         ctx,
@@ -169,14 +183,10 @@ export function* actionsToInitializeExistingDashboard(
         Array.from(attributeFilterDisplayForms),
     );
     /*
-     * NOTE: cannot do without the cast here. The layout in IDashboard is parameterized with IDashboardWidget
-     * which also includes KPI and Insight widget definitions = those without identity. That is however
-     * not valid: any widget for a persisted dashboard must have identity.
-     *
-     * Also note, nested layouts are not yet supported
+     * NOTE: nested layouts are not yet supported
      */
     const dashboardLayout = dashboardLayoutSanitize(
-        customizedDashboard.layout ?? EmptyDashboardLayout,
+        customizedDashboardWithAdditionsResolved.layout ?? EmptyDashboardLayout,
         insights,
         settings,
     );

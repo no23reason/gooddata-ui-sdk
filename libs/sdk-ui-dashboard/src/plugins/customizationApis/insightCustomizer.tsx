@@ -12,7 +12,7 @@ import {
 import { InvariantError } from "ts-invariant";
 import includes from "lodash/includes";
 import { insightTags } from "@gooddata/sdk-model";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 
 const DefaultDashboardInsightComponentProvider: InsightComponentProvider = () => {
     return DefaultDashboardInsight;
@@ -109,14 +109,14 @@ class DefaultInsightCustomizerState implements IInsightCustomizerState {
      */
     private rootProvider: InsightComponentProvider = this.coreProvider;
 
-    private logger: IDashboardCustomizationLogger;
+    private context: IDashboardCustomizationContext;
 
     constructor(
-        logger: IDashboardCustomizationLogger,
+        context: IDashboardCustomizationContext,
         defaultCoreProvider: InsightComponentProvider,
         defaultInsightBodyProvider: InsightBodyComponentProvider,
     ) {
-        this.logger = logger;
+        this.context = context;
         this.coreProviderChain = [defaultCoreProvider];
         this.insightBodyProviderChain = [defaultInsightBodyProvider];
     }
@@ -126,7 +126,7 @@ class DefaultInsightCustomizerState implements IInsightCustomizerState {
         const providerIdx = this.tagProviderIndexes[tag];
 
         if (providerIdx !== undefined) {
-            this.logger.warn(`Overriding insight component provider for tag '${tag}'.`);
+            this.context.warn(`Overriding insight component provider for tag '${tag}'.`);
 
             // if that is the case, replace the previous provider (last provider wins) with this
             // new provider
@@ -170,13 +170,13 @@ class DefaultInsightCustomizerState implements IInsightCustomizerState {
  */
 class SealedInsightCustomizerState implements IInsightCustomizerState {
     constructor(
-        private readonly logger: IDashboardCustomizationLogger,
+        private readonly context: IDashboardCustomizationContext,
         private readonly state: IInsightCustomizerState,
     ) {}
 
     public addCustomProvider = (): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(
+        this.context.warn(
             `Attempting to customize insight rendering outside of plugin registration. Ignoring.`,
         );
     };
@@ -184,7 +184,7 @@ class SealedInsightCustomizerState implements IInsightCustomizerState {
     // eslint-disable-next-line sonarjs/no-identical-functions
     public addInsightBodyProvider = (): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(
+        this.context.warn(
             `Attempting to customize insight rendering outside of plugin registration. Ignoring.`,
         );
     };
@@ -192,7 +192,7 @@ class SealedInsightCustomizerState implements IInsightCustomizerState {
     // eslint-disable-next-line sonarjs/no-identical-functions
     public addTagProvider = (_tag: string): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(
+        this.context.warn(
             `Attempting to customize insight rendering outside of plugin registration. Ignoring.`,
         );
     };
@@ -200,7 +200,7 @@ class SealedInsightCustomizerState implements IInsightCustomizerState {
     // eslint-disable-next-line sonarjs/no-identical-functions
     public switchRootProvider = (): void => {
         // eslint-disable-next-line no-console
-        this.logger.warn(
+        this.context.warn(
             `Attempting to customize insight rendering outside of plugin registration. Ignoring.`,
         );
     };
@@ -226,17 +226,17 @@ class SealedInsightCustomizerState implements IInsightCustomizerState {
  * @internal
  */
 export class DefaultInsightCustomizer implements IDashboardInsightCustomizer {
-    private readonly logger: IDashboardCustomizationLogger;
+    private readonly context: IDashboardCustomizationContext;
     private state: IInsightCustomizerState;
 
     constructor(
-        logger: IDashboardCustomizationLogger,
+        context: IDashboardCustomizationContext,
         defaultCoreProvider: InsightComponentProvider = DefaultDashboardInsightComponentProvider,
         defaultInsightBodyProvider: InsightBodyComponentProvider = DefaultInsightBodyComponentProvider,
     ) {
-        this.logger = logger;
+        this.context = context;
         this.state = new DefaultInsightCustomizerState(
-            logger,
+            context,
             defaultCoreProvider,
             defaultInsightBodyProvider,
         );
@@ -244,7 +244,7 @@ export class DefaultInsightCustomizer implements IDashboardInsightCustomizer {
 
     public withTag = (tag: string, component: CustomDashboardInsightComponent): this => {
         if (!tag) {
-            this.logger.warn(
+            this.context.warn(
                 "The 'withTag' was called with an empty 'tag' parameter. This is effectively a noop.",
             );
             return this;
@@ -309,6 +309,6 @@ export class DefaultInsightCustomizer implements IDashboardInsightCustomizer {
     };
 
     public sealCustomizer = (): void => {
-        this.state = new SealedInsightCustomizerState(this.logger, this.state);
+        this.state = new SealedInsightCustomizerState(this.context, this.state);
     };
 }

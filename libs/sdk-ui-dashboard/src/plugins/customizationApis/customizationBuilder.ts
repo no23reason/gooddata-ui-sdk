@@ -11,7 +11,7 @@ import {
 } from "../customizer";
 import { IDashboardExtensionProps } from "../../presentation";
 import { DefaultInsightCustomizer } from "./insightCustomizer";
-import { DashboardCustomizationLogger } from "./customizationLogging";
+import { DashboardCustomizationContext } from "./customizationContext";
 import { IDashboardPluginContract_V1 } from "../plugin";
 import { DefaultKpiCustomizer } from "./kpiCustomizer";
 import { DefaultWidgetCustomizer } from "./widgetCustomizer";
@@ -23,15 +23,15 @@ import { DefaultFiltersCustomizer } from "./filtersCustomizer";
  * @internal
  */
 export class DashboardCustomizationBuilder implements IDashboardCustomizer {
-    private readonly logger: DashboardCustomizationLogger = new DashboardCustomizationLogger();
-    private readonly insightCustomizer: DefaultInsightCustomizer = new DefaultInsightCustomizer(this.logger);
-    private readonly kpiCustomizer: DefaultKpiCustomizer = new DefaultKpiCustomizer(this.logger);
-    private readonly widgetCustomizer: DefaultWidgetCustomizer = new DefaultWidgetCustomizer(this.logger);
-    private readonly layoutCustomizer: DefaultLayoutCustomizer = new DefaultLayoutCustomizer(this.logger);
+    private readonly context: DashboardCustomizationContext = new DashboardCustomizationContext();
+    private readonly insightCustomizer: DefaultInsightCustomizer = new DefaultInsightCustomizer(this.context);
+    private readonly kpiCustomizer: DefaultKpiCustomizer = new DefaultKpiCustomizer(this.context);
+    private readonly widgetCustomizer: DefaultWidgetCustomizer = new DefaultWidgetCustomizer(this.context);
+    private readonly layoutCustomizer: DefaultLayoutCustomizer = new DefaultLayoutCustomizer(this.context);
     private readonly filterBarCustomizer: DefaultFilterBarCustomizer = new DefaultFilterBarCustomizer(
-        this.logger,
+        this.context,
     );
-    private readonly filtersCustomizer: DefaultFiltersCustomizer = new DefaultFiltersCustomizer(this.logger);
+    private readonly filtersCustomizer: DefaultFiltersCustomizer = new DefaultFiltersCustomizer(this.context);
 
     private sealCustomizers = (): void => {
         this.insightCustomizer.sealCustomizer();
@@ -66,22 +66,24 @@ export class DashboardCustomizationBuilder implements IDashboardCustomizer {
     };
 
     public onBeforePluginRegister = (plugin: IDashboardPluginContract_V1): void => {
-        this.logger.setCurrentPlugin(plugin);
-        this.logger.log("Starting registration.");
+        this.context.setCurrentPlugin(plugin);
+        this.context.log("Starting registration.");
     };
 
     public onAfterPluginRegister = (): void => {
-        this.logger.log("Registration finished.");
-        this.logger.setCurrentPlugin(undefined);
+        this.context.log("Registration finished.");
+
+        this.context.setCurrentPlugin(undefined);
     };
 
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
     public onPluginRegisterError = (error: any): void => {
-        this.logger.error(
+        this.context.error(
             "Plugin register() method threw and exception. Plugin may be partially registered.",
             error,
         );
-        this.logger.setCurrentPlugin(undefined);
+
+        this.context.setCurrentPlugin(undefined);
     };
 
     public build = (): IDashboardExtensionProps => {
@@ -97,7 +99,7 @@ export class DashboardCustomizationBuilder implements IDashboardCustomizer {
                 .getAttributeFilterProvider(),
             DashboardDateFilterComponentProvider: this.filtersCustomizer.date().getDateFilterProvider(),
             customizationFns: {
-                existingDashboardTransformFn: this.layoutCustomizer.getExistingDashboardTransformFn(),
+                readonlyAdditionsFactory: this.layoutCustomizer.getReadOnlyAdditionsFactory(),
             },
             // only set the value if there is anything to set
             ...(filterBarCustomizerResult.FilterBarComponent

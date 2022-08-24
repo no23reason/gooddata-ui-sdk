@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`layout customizer should allow fluid layout customization and deal with transform returning undefined 1`] = `
+Object {
+  "items": Array [],
+  "sections": Array [],
+}
+`;
+
+exports[`layout customizer should allow multiple fluid layout customizations and deal with transforms returning undefined 1`] = `
+Object {
+  "items": Array [],
+  "sections": Array [],
+}
+`;
+
+exports[`layout customizer should ignore errors during transformation 1`] = `
+Object {
+  "items": Array [],
+  "sections": Array [],
+}
+`;
+
+exports[`layout customizer should return empty additions if dashboard has no layout 1`] = `
+Object {
+  "items": Array [],
+  "sections": Array [],
+}
+`;

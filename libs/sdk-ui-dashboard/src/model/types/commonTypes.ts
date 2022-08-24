@@ -7,12 +7,14 @@ import {
     IDashboard,
     ISettings,
     ISeparators,
+    IDashboardLayoutSection,
+    IDashboardLayoutItem,
 } from "@gooddata/sdk-model";
 import { ILocale } from "@gooddata/sdk-ui";
 import keys from "lodash/keys";
 import includes from "lodash/includes";
 import { IDashboardFilter, IMenuButtonItemsVisibility, RenderMode } from "../../types";
-import { ExtendedDashboardWidget } from "./layoutTypes";
+import { ExtendedDashboardWidget, ICustomWidget } from "./layoutTypes";
 
 /**
  * Dashboard component may offer users to pick objects to use on the dashboard.
@@ -279,6 +281,59 @@ export type DashboardTransformFn = (
 ) => IDashboard<ExtendedDashboardWidget> | undefined;
 
 /**
+ * @alpha
+ */
+export interface DashboardLayoutReadOnlyAdditionSource {
+    // TODO improve the name of this type, we need this to be compatible with PluginDescriptor partially
+    displayName: string;
+    debugName?: string;
+    version: string;
+}
+
+/**
+ * @alpha
+ */
+export interface DashboardLayoutReadOnlyAdditionBase {
+    source?: DashboardLayoutReadOnlyAdditionSource;
+}
+
+/**
+ * Object describing a readonly layout section to be added.
+ * @alpha
+ */
+export interface AddReadonlyLayoutSection extends DashboardLayoutReadOnlyAdditionBase {
+    index: number;
+    section: IDashboardLayoutSection<ICustomWidget>;
+}
+
+/**
+ * Object describing a readonly layout item to be added.
+ * @alpha
+ */
+export interface AddReadonlyLayoutItem extends DashboardLayoutReadOnlyAdditionBase {
+    sectionIndex: number;
+    itemIndex: number;
+    item: IDashboardLayoutItem<ICustomWidget>;
+}
+
+/**
+ * Object describing all readonly additions to be made on the dashboard.
+ * @alpha
+ */
+export interface DashboardLayoutReadOnlyAdditions {
+    sections: AddReadonlyLayoutSection[];
+    items: AddReadonlyLayoutItem[];
+}
+
+/**
+ * Function deriving the appropriate readonly additions to be made for a given layout.
+ * @alpha
+ */
+export type DashboardReadOnlyAdditionsFactory = (
+    dashboard: IDashboard<ExtendedDashboardWidget>,
+) => DashboardLayoutReadOnlyAdditions;
+
+/**
  * @public
  */
 export interface DashboardModelCustomizationFns {
@@ -293,6 +348,13 @@ export interface DashboardModelCustomizationFns {
      *    dashboard will be used as-is.
      */
     existingDashboardTransformFn?: DashboardTransformFn;
+
+    /**
+     * Provide a function that will describe how to get the readonly additions to be made to the layout.
+     *
+     * @alpha
+     */
+    readonlyAdditionsFactory?: DashboardReadOnlyAdditionsFactory;
 }
 
 /**

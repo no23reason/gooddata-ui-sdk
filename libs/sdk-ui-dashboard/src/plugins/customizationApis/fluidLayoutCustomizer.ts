@@ -1,37 +1,30 @@
 // (C) 2021-2022 GoodData Corporation
-import { IDashboardLayout, IDashboardLayoutSection, IDashboardLayoutItem } from "@gooddata/sdk-model";
+import { IDashboardLayoutSection, IDashboardLayoutItem } from "@gooddata/sdk-model";
 import { IFluidLayoutCustomizer } from "../customizer";
-import { ExtendedDashboardWidget, ICustomWidget } from "../../model";
-import { DashboardLayoutBuilder } from "../../_staging/dashboard/fluidLayout";
+import {
+    ICustomWidget,
+    AddReadonlyLayoutSection,
+    AddReadonlyLayoutItem,
+    DashboardLayoutReadOnlyAdditions,
+} from "../../model";
 import isEmpty from "lodash/isEmpty";
-import { IDashboardCustomizationLogger } from "./customizationLogging";
+import { IDashboardCustomizationContext } from "./customizationContext";
 import cloneDeep from "lodash/cloneDeep";
 
-type AddItemOp = {
-    sectionIdx: number;
-    itemIdx: number;
-    item: IDashboardLayoutItem<ICustomWidget>;
-};
-
-type AddSectionOp = {
-    sectionIdx: number;
-    section: IDashboardLayoutSection<ICustomWidget>;
-};
-
 export class FluidLayoutCustomizer implements IFluidLayoutCustomizer {
-    private readonly addItemOps: AddItemOp[] = [];
-    private readonly addSectionOps: AddSectionOp[] = [];
+    private readonly addItemOps: AddReadonlyLayoutItem[] = [];
+    private readonly addSectionOps: AddReadonlyLayoutSection[] = [];
 
-    constructor(private readonly logger: IDashboardCustomizationLogger) {}
+    constructor(private readonly context: IDashboardCustomizationContext) {}
 
     public addItem = (
-        sectionIdx: number,
-        itemIdx: number,
+        sectionIndex: number,
+        itemIndex: number,
         item: IDashboardLayoutItem<ICustomWidget>,
     ): IFluidLayoutCustomizer => {
         if (!item.widget) {
-            this.logger.warn(
-                `Item to add to section ${sectionIdx} at index ${itemIdx} does not contain any widget. The item will not be added at all.`,
+            this.context.warn(
+                `Item to add to section ${sectionIndex} at index ${itemIndex} does not contain any widget. The item will not be added at all.`,
                 item,
             );
 
@@ -39,21 +32,22 @@ export class FluidLayoutCustomizer implements IFluidLayoutCustomizer {
         }
 
         this.addItemOps.push({
-            sectionIdx,
-            itemIdx,
+            sectionIndex,
+            itemIndex,
             item: cloneDeep(item),
+            source: this.context.getAdditionSource(),
         });
 
         return this;
     };
 
     public addSection = (
-        sectionIdx: number,
+        index: number,
         section: IDashboardLayoutSection<ICustomWidget>,
     ): IFluidLayoutCustomizer => {
         if (isEmpty(section.items)) {
-            this.logger.warn(
-                `Section to add at index ${sectionIdx} contains no items. The section will not be added at all.`,
+            this.context.warn(
+                `Section to add at index ${index} contains no items. The section will not be added at all.`,
                 section,
             );
 
@@ -63,8 +57,8 @@ export class FluidLayoutCustomizer implements IFluidLayoutCustomizer {
         const itemsWithoutWidget = section.items.filter((item) => item.widget === undefined);
 
         if (!isEmpty(itemsWithoutWidget)) {
-            this.logger.warn(
-                `Section to add at index ${sectionIdx} contains items that do not specify any widgets. The section will not be added at all.`,
+            this.context.warn(
+                `Section to add at index ${index} contains items that do not specify any widgets. The section will not be added at all.`,
                 section,
             );
 
@@ -72,35 +66,17 @@ export class FluidLayoutCustomizer implements IFluidLayoutCustomizer {
         }
 
         this.addSectionOps.push({
-            sectionIdx,
+            index,
             section: cloneDeep(section),
+            source: this.context.getAdditionSource(),
         });
         return this;
     };
 
-    public applyTransformations = (
-        layout: IDashboardLayout<ExtendedDashboardWidget>,
-    ): IDashboardLayout<ExtendedDashboardWidget> => {
-        const builder = DashboardLayoutBuilder.for(layout);
-        const facade = builder.facade();
-
-        this.addItemOps.forEach((op) => {
-            const { sectionIdx, itemIdx, item } = op;
-            const actualSectionIdx = sectionIdx === -1 ? facade.sections().count() : sectionIdx;
-
-            builder.modifySection(actualSectionIdx, (sectionBuilder) => {
-                sectionBuilder.addItem(item, itemIdx === -1 ? undefined : itemIdx);
-
-                return sectionBuilder;
-            });
-        });
-
-        this.addSectionOps.forEach((op) => {
-            const { sectionIdx, section } = op;
-
-            builder.addSection(section, sectionIdx === -1 ? undefined : sectionIdx);
-        });
-
-        return builder.build();
+    public getReadOnlyAdditions = (): DashboardLayoutReadOnlyAdditions => {
+        return {
+            items: [...this.addItemOps],
+            sections: [...this.addSectionOps],
+        };
     };
 }
