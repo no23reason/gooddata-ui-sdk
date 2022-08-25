@@ -291,17 +291,10 @@ export interface DashboardLayoutReadOnlyAdditionSource {
 }
 
 /**
- * @alpha
- */
-export interface DashboardLayoutReadOnlyAdditionBase {
-    source?: DashboardLayoutReadOnlyAdditionSource;
-}
-
-/**
  * Object describing a readonly layout section to be added.
  * @alpha
  */
-export interface AddReadonlyLayoutSection extends DashboardLayoutReadOnlyAdditionBase {
+export interface AddReadonlyLayoutSection {
     index: number;
     section: IDashboardLayoutSection<ICustomWidget>;
 }
@@ -310,14 +303,14 @@ export interface AddReadonlyLayoutSection extends DashboardLayoutReadOnlyAdditio
  * Object describing a readonly layout item to be added.
  * @alpha
  */
-export interface AddReadonlyLayoutItem extends DashboardLayoutReadOnlyAdditionBase {
+export interface AddReadonlyLayoutItem {
     sectionIndex: number;
     itemIndex: number;
     item: IDashboardLayoutItem<ICustomWidget>;
 }
 
 /**
- * Object describing all readonly additions to be made on the dashboard.
+ * Object describing readonly additions to be made on the dashboard that should be applied together.
  * @alpha
  */
 export interface DashboardLayoutReadOnlyAdditions {
@@ -326,12 +319,13 @@ export interface DashboardLayoutReadOnlyAdditions {
 }
 
 /**
- * Function deriving the appropriate readonly additions to be made for a given layout.
+ * Object describing all readonly additions to be made on the dashboard specified by one source.
  * @alpha
  */
-export type DashboardReadOnlyAdditionsFactory = (
-    dashboard: IDashboard<ExtendedDashboardWidget>,
-) => DashboardLayoutReadOnlyAdditions;
+export interface DashboardLayoutReadOnlyAdditionsGroup {
+    additionsFactory: (dashboard: IDashboard<ExtendedDashboardWidget>) => DashboardLayoutReadOnlyAdditions;
+    source: DashboardLayoutReadOnlyAdditionSource | undefined;
+}
 
 /**
  * @public
@@ -350,11 +344,15 @@ export interface DashboardModelCustomizationFns {
     existingDashboardTransformFn?: DashboardTransformFn;
 
     /**
-     * Provide a function that will describe how to get the readonly additions to be made to the layout.
+     * Provide groups of functions that will describe how to get the readonly additions to be made to the layout.
+     *
+     * @remarks
+     * The individual groups are applied atomically: if a part of the group fails, none of the additions in the group
+     * are applied to the dashboard and that group is effectively skipped.
      *
      * @alpha
      */
-    readonlyAdditionsFactory?: DashboardReadOnlyAdditionsFactory;
+    readonlyAdditions?: DashboardLayoutReadOnlyAdditionsGroup[];
 }
 
 /**

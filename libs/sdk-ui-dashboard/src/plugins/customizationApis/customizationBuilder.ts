@@ -99,7 +99,7 @@ export class DashboardCustomizationBuilder implements IDashboardCustomizer {
                 .getAttributeFilterProvider(),
             DashboardDateFilterComponentProvider: this.filtersCustomizer.date().getDateFilterProvider(),
             customizationFns: {
-                readonlyAdditionsFactory: this.layoutCustomizer.getReadOnlyAdditionsFactory(),
+                readonlyAdditions: this.layoutCustomizer.getReadOnlyAdditions(),
             },
             // only set the value if there is anything to set
             ...(filterBarCustomizerResult.FilterBarComponent

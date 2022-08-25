@@ -1,18 +1,17 @@
 // (C) 2022 GoodData Corporation
-import { DashboardLayoutReadOnlyAdditionSource } from "../../../../model";
 import { IDashboardPluginContract_V1 } from "../../../plugin";
 import { IDashboardCustomizationContext } from "../../customizationContext";
 
 export class TestingDashboardCustomizationContext implements IDashboardCustomizationContext {
     private readonly setCurrentPluginImpl: IDashboardCustomizationContext["setCurrentPlugin"] | undefined;
-    private readonly getAdditionSourceImpl: IDashboardCustomizationContext["getAdditionSource"] | undefined;
+    private readonly getCurrentPluginImpl: IDashboardCustomizationContext["getCurrentPlugin"] | undefined;
     private readonly logImpl: IDashboardCustomizationContext["log"] | undefined;
     private readonly warnImpl: IDashboardCustomizationContext["warn"] | undefined;
     private readonly errorImpl: IDashboardCustomizationContext["error"] | undefined;
 
     constructor(functions: Partial<IDashboardCustomizationContext>) {
         this.setCurrentPluginImpl = functions.setCurrentPlugin;
-        this.getAdditionSourceImpl = functions.getAdditionSource;
+        this.getCurrentPluginImpl = functions.getCurrentPlugin;
         this.logImpl = functions.log;
         this.warnImpl = functions.warn;
         this.errorImpl = functions.error;
@@ -21,8 +20,8 @@ export class TestingDashboardCustomizationContext implements IDashboardCustomiza
     setCurrentPlugin(plugin: IDashboardPluginContract_V1 | undefined): void {
         this.setCurrentPluginImpl?.(plugin);
     }
-    getAdditionSource(): DashboardLayoutReadOnlyAdditionSource | undefined {
-        return this.getAdditionSourceImpl?.();
+    getCurrentPlugin(): IDashboardPluginContract_V1 | undefined {
+        return this.getCurrentPluginImpl?.();
     }
     log(message: string, ...optionalParams: any[]): void {
         this.logImpl?.(message, optionalParams);

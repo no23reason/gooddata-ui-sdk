@@ -31,9 +31,10 @@ describe("layout customizer", () => {
     it("should allow fluid layout customization and deal with transform returning undefined", () => {
         const customizationFn = jest.fn();
         Customizer.customizeFluidLayout(customizationFn);
-        const factory = Customizer.getReadOnlyAdditionsFactory();
+        const additions = Customizer.getReadOnlyAdditions();
 
-        expect(factory(EmptyDashboard)).toMatchSnapshot();
+        expect(additions).toHaveLength(1);
+        expect(additions[0].additionsFactory(EmptyDashboard)).toMatchSnapshot();
         expect(customizationFn).toHaveBeenCalledTimes(1);
     });
 
@@ -42,9 +43,10 @@ describe("layout customizer", () => {
         const customizationFn2 = jest.fn();
         Customizer.customizeFluidLayout(customizationFn1);
         Customizer.customizeFluidLayout(customizationFn2);
-        const factory = Customizer.getReadOnlyAdditionsFactory();
+        const additions = Customizer.getReadOnlyAdditions();
 
-        expect(factory(EmptyDashboard)).toMatchSnapshot();
+        expect(additions).toHaveLength(1);
+        expect(additions[0].additionsFactory(EmptyDashboard)).toMatchSnapshot();
         expect(customizationFn1).toHaveBeenCalledTimes(1);
         expect(customizationFn2).toHaveBeenCalledTimes(1);
     });
@@ -53,17 +55,19 @@ describe("layout customizer", () => {
         Customizer.customizeFluidLayout(() => {
             throw Error();
         });
-        const factory = Customizer.getReadOnlyAdditionsFactory();
+        const additions = Customizer.getReadOnlyAdditions();
 
-        expect(factory(EmptyDashboard)).toMatchSnapshot();
+        expect(additions).toHaveLength(1);
+        expect(additions[0].additionsFactory(EmptyDashboard)).toMatchSnapshot();
     });
 
     it("should return empty additions if dashboard has no layout", () => {
         const DashboardWithNoLayout = { ...EmptyDashboard, layout: undefined };
         const customizationFn = jest.fn();
         Customizer.customizeFluidLayout(customizationFn);
-        const factory = Customizer.getReadOnlyAdditionsFactory();
+        const additions = Customizer.getReadOnlyAdditions();
 
-        expect(factory(DashboardWithNoLayout)).toMatchSnapshot();
+        expect(additions).toHaveLength(1);
+        expect(additions[0].additionsFactory(DashboardWithNoLayout)).toMatchSnapshot();
     });
 });

@@ -1,13 +1,19 @@
 // (C) 2021-2022 GoodData Corporation
+import invariant from "ts-invariant";
 import { FluidLayoutCustomizationFn, IDashboardLayoutCustomizer } from "../customizer";
 import { IDashboardCustomizationContext } from "./customizationContext";
 import { FluidLayoutCustomizer } from "./fluidLayoutCustomizer";
-import { DashboardLayoutReadOnlyAdditions, DashboardReadOnlyAdditionsFactory } from "../../model";
-import { evaluateDashboardReadOnlyAdditions } from "../../_staging/dashboard/evaluateDashboardReadOnlyAdditions";
+import { DashboardLayoutReadOnlyAdditions, DashboardLayoutReadOnlyAdditionsGroup } from "../../model";
+import { DashboardPluginDescriptor } from "../plugin";
+
+interface Transformation {
+    customization: FluidLayoutCustomizationFn;
+    pluginDescriptor: DashboardPluginDescriptor | undefined;
+}
 
 export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
     private sealed = false;
-    private readonly fluidLayoutTransformations: FluidLayoutCustomizationFn[] = [];
+    private readonly transformations: Transformation[] = [];
 
     constructor(private readonly context: IDashboardCustomizationContext) {}
 
@@ -15,7 +21,10 @@ export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
         customizationFn: FluidLayoutCustomizationFn,
     ): IDashboardLayoutCustomizer => {
         if (!this.sealed) {
-            this.fluidLayoutTransformations.push(customizationFn);
+            this.transformations.push({
+                pluginDescriptor: this.context.getCurrentPlugin(),
+                customization: customizationFn,
+            });
         } else {
             this.context.warn(
                 `Attempting to add layout customization outside of plugin registration. Ignoring.`,
@@ -31,59 +40,50 @@ export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
         return this;
     };
 
-    public getReadOnlyAdditionsFactory = (): DashboardReadOnlyAdditionsFactory => {
-        const snapshot = [...this.fluidLayoutTransformations];
-        return (dashboard) => {
-            const { layout } = dashboard;
-            const emptyAdditions: DashboardLayoutReadOnlyAdditions = {
-                items: [],
-                sections: [],
-            };
-            /*
-             * Once the dashboard component supports multiple layout types, then the code here must only
-             * perform the transformations applicable for the dashboard's layout type..
-             *
-             * At this point, since dashboard only supports fluid layout, the code tests that there is a
-             * layout in a dashboard and is of expected type. This condition will be always true for
-             * non-empty, non-corrupted dashboards
-             */
-            if (!layout || layout.type !== "IDashboardLayout") {
-                return emptyAdditions;
-            }
+    public getReadOnlyAdditions = (): DashboardLayoutReadOnlyAdditionsGroup[] => {
+        const snapshot = [...this.transformations];
 
-            const res = snapshot.reduce(
-                (acc, fn) => {
-                    const customizer = new FluidLayoutCustomizer(this.context);
-                    const { layout: currentLayout, additions } = acc;
-                    try {
-                        // call out to the plugin-provided function with the current value of the layout & the
-                        // customizer to use. the custom function may now inspect the layout & use the customizer
-                        // to add sections or items. customizer will not reflect those changes immediately. instead
-                        // it will accumulate those operations
-                        fn(currentLayout, customizer);
-                        // now make extract the addition definitions from the customizer
-                        const newAdditions = customizer.getReadOnlyAdditions();
-                        return {
-                            // apply the transformations so that subsequent factories "see" the updated layout
-                            layout: evaluateDashboardReadOnlyAdditions(currentLayout, newAdditions)!,
-                            additions: {
-                                items: [...additions.items, ...newAdditions.items],
-                                sections: [...additions.sections, ...newAdditions.sections],
-                            },
+        return snapshot.reduce((acc: DashboardLayoutReadOnlyAdditionsGroup[], curr) => {
+            const alreadyInResult = acc.find((res) => res.source === curr.pluginDescriptor);
+            if (alreadyInResult) {
+                // TODO merge transformations, it is completely valid to call the transform more than once
+                invariant(false, "Adding the same plugin multiple times");
+            } else {
+                acc.push({
+                    additionsFactory: (dashboard) => {
+                        const { layout } = dashboard;
+                        const emptyAdditions: DashboardLayoutReadOnlyAdditions = {
+                            items: [],
+                            sections: [],
                         };
-                    } catch (e) {
-                        this.context.error(
-                            "An error has occurred while transforming fluid dashboard layout. Skipping failed transformation.",
-                            e,
-                        );
-
-                        return acc;
-                    }
-                },
-                { layout, additions: emptyAdditions },
-            );
-
-            return res.additions;
-        };
+                        /*
+                         * Once the dashboard component supports multiple layout types, then the code here must only
+                         * perform the transformations applicable for the dashboard's layout type..
+                         *
+                         * At this point, since dashboard only supports fluid layout, the code tests that there is a
+                         * layout in a dashboard and is of expected type. This condition will be always true for
+                         * non-empty, non-corrupted dashboards
+                         */
+                        if (!layout || layout.type !== "IDashboardLayout") {
+                            return emptyAdditions;
+                        }
+                        try {
+                            const customizer = new FluidLayoutCustomizer(this.context); // TODO just logger? pass plugin descriptor
+                            // call out to the plugin-provided function with the current value of the layout & the
+                            // customizer to use. the custom function may now inspect the layout & use the customizer
+                            // to add sections or items. customizer will not reflect those changes immediately. instead
+                            // it will accumulate those operations
+                            curr.customization(layout, customizer);
+                            // now make extract the addition definitions from the customizer
+                            return customizer.getReadOnlyAdditions();
+                        } catch (e) {
+                            return emptyAdditions;
+                        }
+                    },
+                    source: curr.pluginDescriptor,
+                });
+            }
+            return acc;
+        }, []);
     };
 }

@@ -35,7 +35,6 @@ export class FluidLayoutCustomizer implements IFluidLayoutCustomizer {
             sectionIndex,
             itemIndex,
             item: cloneDeep(item),
-            source: this.context.getAdditionSource(),
         });
 
         return this;
@@ -68,7 +67,6 @@ export class FluidLayoutCustomizer implements IFluidLayoutCustomizer {
         this.addSectionOps.push({
             index,
             section: cloneDeep(section),
-            source: this.context.getAdditionSource(),
         });
         return this;
     };

@@ -147,15 +147,10 @@ export function* actionsToInitializeExistingDashboard(
     const customizedDashboard =
         privateCtx?.existingDashboardTransformFn?.(sanitizedDashboard) ?? sanitizedDashboard;
 
-    const readonlyAdditions = privateCtx?.readonlyAdditionsFactory?.(sanitizedDashboard);
-    const customizedLayout = readonlyAdditions
-        ? evaluateDashboardReadOnlyAdditions(customizedDashboard.layout, readonlyAdditions)
-        : customizedDashboard.layout;
-
-    const customizedDashboardWithAdditionsResolved: IDashboard<ExtendedDashboardWidget> = {
-        ...customizedDashboard,
-        layout: customizedLayout,
-    };
+    const readonlyAdditions = privateCtx?.readonlyAdditions;
+    const customizedDashboardWithAdditionsResolved = readonlyAdditions
+        ? evaluateDashboardReadOnlyAdditions(customizedDashboard, readonlyAdditions)
+        : customizedDashboard;
 
     const filterContextDefinition = dashboardFilterContextDefinition(
         customizedDashboardWithAdditionsResolved,

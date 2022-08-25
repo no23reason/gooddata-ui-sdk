@@ -1,6 +1,5 @@
 // (C) 2021-2022 GoodData Corporation
 
-import { DashboardLayoutReadOnlyAdditionSource } from "../../model";
 import { IDashboardPluginContract_V1 } from "../plugin";
 import { pluginDebugStr } from "./pluginUtils";
 
@@ -10,7 +9,7 @@ function addPluginInfoToMessage(plugin: IDashboardPluginContract_V1 | undefined,
 
 export interface IDashboardCustomizationContext {
     setCurrentPlugin(plugin: IDashboardPluginContract_V1 | undefined): void;
-    getAdditionSource(): DashboardLayoutReadOnlyAdditionSource | undefined;
+    getCurrentPlugin(): IDashboardPluginContract_V1 | undefined;
 
     log(message: string, ...optionalParams: any[]): void;
     warn(message: string, ...optionalParams: any[]): void;
@@ -28,6 +27,10 @@ export class DashboardCustomizationContext implements IDashboardCustomizationCon
         this.currentPlugin = plugin;
     };
 
+    public getCurrentPlugin(): IDashboardPluginContract_V1 | undefined {
+        return this.currentPlugin;
+    }
+
     public log = (message: string, ...optionalParams: any[]): void => {
         // eslint-disable-next-line no-console
         console.log(addPluginInfoToMessage(this.currentPlugin, message), optionalParams);
@@ -40,16 +43,4 @@ export class DashboardCustomizationContext implements IDashboardCustomizationCon
         // eslint-disable-next-line no-console
         console.error(addPluginInfoToMessage(this.currentPlugin, message), optionalParams);
     };
-
-    public getAdditionSource(): DashboardLayoutReadOnlyAdditionSource | undefined {
-        if (!this.currentPlugin) {
-            return undefined;
-        }
-
-        return {
-            displayName: this.currentPlugin.displayName,
-            debugName: this.currentPlugin.debugName,
-            version: this.currentPlugin.version,
-        };
-    }
 }

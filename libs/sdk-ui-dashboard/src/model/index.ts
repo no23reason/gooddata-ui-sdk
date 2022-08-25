@@ -28,9 +28,8 @@ export {
     AddReadonlyLayoutItem,
     AddReadonlyLayoutSection,
     DashboardLayoutReadOnlyAdditions,
-    DashboardReadOnlyAdditionsFactory,
+    DashboardLayoutReadOnlyAdditionsGroup,
     DashboardLayoutReadOnlyAdditionSource,
-    DashboardLayoutReadOnlyAdditionBase,
 } from "./types/commonTypes";
 export {
     ICustomWidget,
