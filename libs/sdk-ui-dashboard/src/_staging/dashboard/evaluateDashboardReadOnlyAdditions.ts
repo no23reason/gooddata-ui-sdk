@@ -30,9 +30,9 @@ function logTransformationError(plugin: DashboardLayoutReadOnlyAdditionSource | 
 const evaluateDashboardReadOnlyItemAdditions =
     (additions: AddReadonlyLayoutItem[]) =>
     (layout: IDashboardLayout<ExtendedDashboardWidget>): IDashboardLayout<ExtendedDashboardWidget> => {
-        return additions.reduce((_currentLayout, itemAddition) => {
+        return additions.reduce((currentLayout, itemAddition) => {
             const { sectionIndex, itemIndex, item } = itemAddition;
-            const builder = DashboardLayoutBuilder.for(layout);
+            const builder = DashboardLayoutBuilder.for(currentLayout);
 
             const actualSectionIdx = sectionIndex === -1 ? builder.facade().sections().count() : sectionIndex;
 
@@ -47,10 +47,10 @@ const evaluateDashboardReadOnlyItemAdditions =
 const evaluateDashboardReadOnlySectionAdditions =
     (additions: AddReadonlyLayoutSection[]) =>
     (layout: IDashboardLayout<ExtendedDashboardWidget>): IDashboardLayout<ExtendedDashboardWidget> => {
-        return additions.reduce((_currentLayout, itemAddition) => {
+        return additions.reduce((currentLayout, itemAddition) => {
             const { index, section } = itemAddition;
 
-            const builder = DashboardLayoutBuilder.for(layout);
+            const builder = DashboardLayoutBuilder.for(currentLayout);
 
             builder.addSection(section, index === -1 ? undefined : index);
             return builder.build();

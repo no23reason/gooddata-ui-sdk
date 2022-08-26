@@ -1,5 +1,6 @@
 // (C) 2021-2022 GoodData Corporation
 import invariant from "ts-invariant";
+import last from "lodash/last";
 import { FluidLayoutCustomizationFn, IDashboardLayoutCustomizer } from "../customizer";
 import { IDashboardCustomizationContext } from "./customizationContext";
 import { FluidLayoutCustomizer } from "./fluidLayoutCustomizer";
@@ -8,6 +9,11 @@ import { DashboardPluginDescriptor } from "../plugin";
 
 interface Transformation {
     customization: FluidLayoutCustomizationFn;
+    pluginDescriptor: DashboardPluginDescriptor | undefined;
+}
+
+interface GroupedTransformation {
+    customizations: FluidLayoutCustomizationFn[];
     pluginDescriptor: DashboardPluginDescriptor | undefined;
 }
 
@@ -43,10 +49,27 @@ export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
     public getReadOnlyAdditions = (): DashboardLayoutReadOnlyAdditionsGroup[] => {
         const snapshot = [...this.transformations];
 
-        return snapshot.reduce((acc: DashboardLayoutReadOnlyAdditionsGroup[], curr) => {
+        // group consecutive transformations from the same plugin into one
+        // this allows us to run all the transformations of the same plugin at once
+        let lastPlugin: DashboardPluginDescriptor | undefined = undefined;
+        const grouped: GroupedTransformation[] = [];
+        for (const transformation of snapshot) {
+            if (transformation.pluginDescriptor !== lastPlugin || grouped.length === 0) {
+                // new group
+                grouped.push({
+                    customizations: [transformation.customization],
+                    pluginDescriptor: transformation.pluginDescriptor,
+                });
+                lastPlugin = transformation.pluginDescriptor;
+            } else {
+                // existing group
+                last(grouped)!.customizations.push(transformation.customization);
+            }
+        }
+
+        return grouped.reduce((acc: DashboardLayoutReadOnlyAdditionsGroup[], curr) => {
             const alreadyInResult = acc.find((res) => res.source === curr.pluginDescriptor);
             if (alreadyInResult) {
-                // TODO merge transformations, it is completely valid to call the transform more than once
                 invariant(false, "Adding the same plugin multiple times");
             } else {
                 acc.push({
@@ -67,18 +90,15 @@ export class DefaultLayoutCustomizer implements IDashboardLayoutCustomizer {
                         if (!layout || layout.type !== "IDashboardLayout") {
                             return emptyAdditions;
                         }
-                        try {
-                            const customizer = new FluidLayoutCustomizer(this.context); // TODO just logger? pass plugin descriptor
-                            // call out to the plugin-provided function with the current value of the layout & the
-                            // customizer to use. the custom function may now inspect the layout & use the customizer
-                            // to add sections or items. customizer will not reflect those changes immediately. instead
-                            // it will accumulate those operations
-                            curr.customization(layout, customizer);
-                            // now make extract the addition definitions from the customizer
-                            return customizer.getReadOnlyAdditions();
-                        } catch (e) {
-                            return emptyAdditions;
-                        }
+
+                        const customizer = new FluidLayoutCustomizer(this.context); // TODO just logger? pass plugin descriptor
+                        // call out to the plugin-provided functions with the current value of the layout & the
+                        // customizer to use. the custom functions may now inspect the layout & use the customizer
+                        // to add sections or items. customizer will not reflect those changes immediately. instead
+                        // it will accumulate those operations
+                        curr.customizations.forEach((fn) => fn(layout, customizer)); // TODO this is not correct, the following fns need to see the updated layout
+                        // now make extract the addition definitions from the customizer
+                        return customizer.getReadOnlyAdditions();
                     },
                     source: curr.pluginDescriptor,
                 });
