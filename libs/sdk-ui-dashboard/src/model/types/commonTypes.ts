@@ -7,6 +7,7 @@ import {
     IDashboard,
     ISettings,
     ISeparators,
+    IDashboardLayout,
 } from "@gooddata/sdk-model";
 import { ILocale } from "@gooddata/sdk-ui";
 import keys from "lodash/keys";
@@ -279,6 +280,13 @@ export type DashboardTransformFn = (
 ) => IDashboard<ExtendedDashboardWidget> | undefined;
 
 /**
+ * @alpha
+ */
+export type DashboardToLayoutTransformFn = (
+    dashboard: IDashboard<ExtendedDashboardWidget>,
+) => IDashboardLayout<ExtendedDashboardWidget> | undefined;
+
+/**
  * @public
  */
 export interface DashboardModelCustomizationFns {
@@ -293,6 +301,21 @@ export interface DashboardModelCustomizationFns {
      *    dashboard will be used as-is.
      */
     existingDashboardTransformFn?: DashboardTransformFn;
+
+    /**
+     * Provide a function that will be evaluated on every change of the dashboard.
+     *
+     * @remarks
+     * This function will be called on every change to the dashboard so that it can perform some changes
+     * (typically the same type of changes that are available in Dashboard plugins). The function will be called
+     * with the "bare" Dashboard, any alterations made by Dashboard plugins will be ignored in the input.
+     *
+     * -  If the function is not defined, results in an error or returns `undefined`, then the original
+     *    dashboard layout will be used as-is.
+     *
+     * @alpha
+     */
+    ongoingDashboardLayoutTransformFn?: DashboardToLayoutTransformFn;
 }
 
 /**

@@ -1,4 +1,4 @@
-// (C) 2021 GoodData Corporation
+// (C) 2021-2022 GoodData Corporation
 
 import { DashboardContext } from "../../types/commonTypes";
 import { DeleteDashboard } from "../../commands";
@@ -29,13 +29,14 @@ function deleteDashboard(ctx: DashboardContext, dashboardRef: ObjRef): Promise<v
  */
 function* resetToNewDashboard(ctx: DashboardContext): SagaIterator<DashboardContext> {
     const dateFilterConfig: ReturnType<typeof selectDateFilterConfig> = yield select(selectDateFilterConfig);
+    const initActions: SagaReturnType<typeof actionsToInitializeNewDashboard> = yield call(
+        actionsToInitializeNewDashboard,
+        dateFilterConfig,
+    );
 
     yield put(
         batchActions(
-            [
-                ...actionsToInitializeNewDashboard(dateFilterConfig),
-                executionResultsActions.clearAllExecutionResults(),
-            ],
+            [...initActions, executionResultsActions.clearAllExecutionResults()],
             "@@GDC.DASH/BATCH.CLEAR",
         ),
     );

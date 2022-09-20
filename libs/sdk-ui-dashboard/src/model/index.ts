@@ -18,6 +18,7 @@ export {
     DashboardConfig,
     DashboardModelCustomizationFns,
     DashboardTransformFn,
+    DashboardToLayoutTransformFn,
     FiltersInfo,
     ResolvedDashboardConfig,
     ResolvableFilter,

@@ -80,6 +80,7 @@ const nonSerializableEventsAndCommands: (DashboardEventType | DashboardCommandTy
     "GDC.DASH/CMD.DRILL.DRILLABLE_ITEMS.CHANGE",
     "GDC.DASH/EVT.DRILL.DRILLABLE_ITEMS.CHANGED",
     "meta/setDrillableItems",
+    "meta/setOngoingDashboardLayoutTransformFn",
     "layout/updateWidgetIdentities",
     "executionResults/upsertExecutionResult",
     "loadingSlice/setLoadingError",
@@ -329,6 +330,8 @@ export function createDashboardStore(config: DashboardStoreConfig): ReduxedDashb
                         "drill.drillableItems",
                         // executions can have Errors stored, also some decorated execution results are non-serializable too
                         "executionResults",
+                        // the ongoing transformation is always a function
+                        "meta.ongoingDashboardLayoutTransformFn",
                     ],
                     // prolong the check limit, otherwise this will flood the logs on CI with non-actionable warnings
                     warnAfter: 128,

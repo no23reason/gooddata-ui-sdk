@@ -4,6 +4,7 @@ import { Action, CaseReducer, PayloadAction } from "@reduxjs/toolkit";
 import { DashboardMetaState, EmptyDashboardDescriptor } from "./metaState";
 import { IDashboard } from "@gooddata/sdk-model";
 import invariant from "ts-invariant";
+import { DashboardToLayoutTransformFn } from "../../types/commonTypes";
 
 type MetaReducer<A extends Action> = CaseReducer<DashboardMetaState, A>;
 
@@ -31,8 +32,14 @@ const setDashboardTitle: MetaReducer<PayloadAction<string>> = (state, action) =>
 
     state.descriptor.title = action.payload;
 };
+const setOngoingDashboardLayoutTransformFn: MetaReducer<
+    PayloadAction<DashboardToLayoutTransformFn | undefined>
+> = (state, action) => {
+    state.ongoingDashboardLayoutTransformFn = action.payload;
+};
 
 export const metaReducers = {
     setMeta,
     setDashboardTitle,
+    setOngoingDashboardLayoutTransformFn,
 };

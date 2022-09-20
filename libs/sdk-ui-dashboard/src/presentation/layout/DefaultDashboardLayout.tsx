@@ -14,7 +14,8 @@ import {
     useDashboardSelector,
     selectIsExport,
     selectIsLayoutEmpty,
-    selectLayout,
+    // selectLayout,
+    selectLayoutWithClientExtensions,
     ExtendedDashboardWidget,
     selectInsightsMap,
     selectEnableWidgetCustomHeight,
@@ -87,7 +88,8 @@ const itemKeyGetter: IDashboardLayoutItemKeyGetter<ExtendedDashboardWidget> = (k
 export const DefaultDashboardLayout = (props: IDashboardLayoutProps): JSX.Element => {
     const { onFiltersChange, onDrill, onError } = props;
 
-    const layout = useDashboardSelector(selectLayout);
+    // const layout = useDashboardSelector(selectLayout);
+    const layout = useDashboardSelector(selectLayoutWithClientExtensions)!;
     const isLayoutEmpty = useDashboardSelector(selectIsLayoutEmpty);
     const enableWidgetCustomHeight = useDashboardSelector(selectEnableWidgetCustomHeight);
     const insights = useDashboardSelector(selectInsightsMap);

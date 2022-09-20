@@ -1,4 +1,4 @@
-// (C) 2021 GoodData Corporation
+// (C) 2021-2022 GoodData Corporation
 import { DashboardContext } from "../../types/commonTypes";
 import { ResetDashboard } from "../../commands";
 import { SagaIterator } from "redux-saga";
@@ -59,7 +59,7 @@ export function* resetDashboardHandler(
             selectDateFilterConfig,
         );
 
-        batch = actionsToInitializeNewDashboard(dateFilterConfig);
+        batch = yield call(actionsToInitializeNewDashboard, dateFilterConfig);
     }
 
     yield put(batchActions(batch, "@@GDC.DASH/RESET"));

@@ -50,9 +50,10 @@ export const EmptyDashboardLayout: IDashboardLayout<IWidget> = {
  *
  * @param dateFilterConfig - date filter config to use for the new dashboard
  */
-export function actionsToInitializeNewDashboard(
+export function* actionsToInitializeNewDashboard(
     dateFilterConfig: IDateFilterConfig,
-): Array<PayloadAction<any>> {
+): SagaIterator<Array<PayloadAction<any>>> {
+    const privateCtx: PrivateDashboardContext = yield call(getPrivateContext);
     return [
         alertsActions.setAlerts([]),
         filterContextActions.setFilterContext({
@@ -64,6 +65,7 @@ export function actionsToInitializeNewDashboard(
         layoutActions.setLayout(EmptyDashboardLayout),
         insightsActions.setInsights([]),
         metaActions.setMeta({}),
+        metaActions.setOngoingDashboardLayoutTransformFn(privateCtx.ongoingDashboardLayoutTransformFn),
     ];
 }
 
@@ -194,6 +196,7 @@ export function* actionsToInitializeExistingDashboard(
         metaActions.setMeta({
             dashboard,
         }),
+        metaActions.setOngoingDashboardLayoutTransformFn(privateCtx.ongoingDashboardLayoutTransformFn),
         uiActions.clearWidgetSelection(),
     ];
 }

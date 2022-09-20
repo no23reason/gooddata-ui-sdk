@@ -193,6 +193,7 @@ export {
     selectIsNewDashboard,
     selectIsDashboardDirty,
     selectIsDashboardPrivate,
+    selectLayoutWithClientExtensions,
 } from "./meta/metaSelectors";
 export {
     selectListedDashboards,

@@ -1,6 +1,7 @@
 // (C) 2021-2022 GoodData Corporation
 
 import { IDashboard, IAccessControlAware } from "@gooddata/sdk-model";
+import { DashboardToLayoutTransformFn } from "../../types/commonTypes";
 
 /**
  * @public
@@ -31,9 +32,12 @@ export interface DashboardMetaState {
      * SaveAsDashboard command processing (which essentially flush the current dashboard state to backend)
      */
     persistedDashboard?: IDashboard;
+
+    ongoingDashboardLayoutTransformFn?: DashboardToLayoutTransformFn;
 }
 
 export const metaInitialState: DashboardMetaState = {
     descriptor: EmptyDashboardDescriptor,
     persistedDashboard: undefined,
+    ongoingDashboardLayoutTransformFn: undefined,
 };

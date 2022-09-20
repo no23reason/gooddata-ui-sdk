@@ -49,6 +49,7 @@ import { IDashboardAttributeFilter } from '@gooddata/sdk-model';
 import { IDashboardAttributeFilterParent } from '@gooddata/sdk-model';
 import { IDashboardDateFilter } from '@gooddata/sdk-model';
 import { IDashboardDateFilterConfig as IDashboardDateFilterConfig_2 } from '@gooddata/sdk-model';
+import { IDashboardDefinition } from '@gooddata/sdk-model';
 import { IDashboardFilterReference } from '@gooddata/sdk-model';
 import { IDashboardLayout } from '@gooddata/sdk-model';
 import { IDashboardLayoutItem } from '@gooddata/sdk-model';
@@ -1780,12 +1781,16 @@ export interface DashboardLayoutSectionRemovedPayload {
 // @alpha (undocumented)
 export interface DashboardMetaState {
     descriptor?: DashboardDescriptor;
+    // (undocumented)
+    ongoingDashboardLayoutTransformFn?: DashboardToLayoutTransformFn;
     persistedDashboard?: IDashboard;
 }
 
 // @public (undocumented)
 export interface DashboardModelCustomizationFns {
     existingDashboardTransformFn?: DashboardTransformFn;
+    // @alpha
+    ongoingDashboardLayoutTransformFn?: DashboardToLayoutTransformFn;
 }
 
 // @public
@@ -2040,6 +2045,9 @@ export class DashboardStoreAccessorRepository {
 
 // @internal (undocumented)
 export const DashboardStoreProvider: React_2.FC<IDashboardStoreProviderProps>;
+
+// @alpha (undocumented)
+export type DashboardToLayoutTransformFn = (dashboard: IDashboard<ExtendedDashboardWidget>) => IDashboardLayout<ExtendedDashboardWidget> | undefined;
 
 // @public (undocumented)
 export type DashboardTransformFn = (dashboard: IDashboard<ExtendedDashboardWidget>) => IDashboard<ExtendedDashboardWidget> | undefined;
@@ -5586,6 +5594,9 @@ itemIndex: number;
 
 // @alpha
 export const selectLayout: OutputSelector<DashboardState, IDashboardLayout<ExtendedDashboardWidget>, (res: LayoutState) => IDashboardLayout<ExtendedDashboardWidget>>;
+
+// @alpha
+export const selectLayoutWithClientExtensions: OutputSelector<DashboardState, IDashboardLayout<ExtendedDashboardWidget> | undefined, (res1: IDashboardDefinition<ExtendedDashboardWidget>, res2: DashboardToLayoutTransformFn | undefined) => IDashboardLayout<ExtendedDashboardWidget> | undefined>;
 
 // @alpha
 export const selectLegacyDashboards: OutputSelector<DashboardState, ILegacyDashboard[], (res: LegacyDashboardsState) => ILegacyDashboard[]>;

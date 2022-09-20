@@ -8,17 +8,23 @@ import {
     IAccessControlAware,
     isDashboardDateFilter,
     isDashboardAttributeFilter,
+    IDashboardDefinition,
+    IDashboardObjectIdentity,
 } from "@gooddata/sdk-model";
 import invariant from "ts-invariant";
 import { DashboardState } from "../types";
 import isUndefined from "lodash/isUndefined";
-import { selectBasicLayout } from "../layout/layoutSelectors";
+import { selectBasicLayout, selectLayout } from "../layout/layoutSelectors";
 import {
     selectFilterContextAttributeFilters,
     selectFilterContextDateFilter,
+    selectFilterContextDefinition,
+    selectFilterContextIdentity,
 } from "../filterContext/filterContextSelectors";
 import { isDashboardLayoutEmpty } from "@gooddata/sdk-backend-spi";
 import isEqual from "lodash/isEqual";
+import { selectDateFilterConfigOverrides } from "../dateFilterConfig/dateFilterConfigSelectors";
+import { ExtendedDashboardWidget } from "../../types/layoutTypes";
 
 const selectSelf = createSelector(
     (state: DashboardState) => state,
@@ -384,5 +390,77 @@ export const selectIsDashboardDirty = createSelector(
         }
 
         return [isFiltersChanged, isTitleChanged, isLayoutChanged].some(Boolean);
+    },
+);
+
+/**
+ * Selects the whole dashboard object.
+ * @internal
+ */
+export const selectDashboardDefinition = createSelector(
+    selectPersistedDashboard,
+    selectDashboardDescriptor,
+    selectFilterContextDefinition,
+    selectFilterContextIdentity,
+    selectLayout,
+    selectDateFilterConfigOverrides,
+    (
+        persistedDashboard,
+        dashboardDescriptor,
+        filterContextDefinition,
+        filterContextIdentity,
+        layout,
+        dateFilterConfig,
+    ): IDashboardDefinition<ExtendedDashboardWidget> => {
+        const dashboardIdentity: Partial<IDashboardObjectIdentity> = {
+            ref: persistedDashboard?.ref,
+            uri: persistedDashboard?.uri,
+            identifier: persistedDashboard?.identifier,
+        };
+
+        const pluginsProp = persistedDashboard?.plugins ? { plugins: persistedDashboard.plugins } : {};
+
+        return {
+            type: "IDashboard",
+            ...dashboardDescriptor,
+            ...dashboardIdentity,
+            filterContext: {
+                ...filterContextIdentity,
+                ...filterContextDefinition,
+            },
+            layout,
+            dateFilterConfig,
+            ...pluginsProp,
+        };
+    },
+);
+
+const selectOngoingDashboardLayoutTransformFn = createSelector(selectSelf, (state) => {
+    return state.ongoingDashboardLayoutTransformFn;
+});
+
+/**
+ * This selector returns dashboard's layout with client extensions applied. It is expected that the selector
+ * is called only after the layout state is correctly initialized. Invocations before initialization lead to invariant errors.
+ *
+ * @alpha
+ */
+export const selectLayoutWithClientExtensions = createSelector(
+    selectDashboardDefinition,
+    selectOngoingDashboardLayoutTransformFn,
+    (definition, ongoingDashboardLayoutTransformFn) => {
+        let result = definition.layout;
+        if (ongoingDashboardLayoutTransformFn) {
+            try {
+                const withTransformation = ongoingDashboardLayoutTransformFn(definition as any);
+                if (withTransformation) {
+                    result = withTransformation;
+                }
+            } catch {
+                // do nothing
+            }
+        }
+
+        return result;
     },
 );

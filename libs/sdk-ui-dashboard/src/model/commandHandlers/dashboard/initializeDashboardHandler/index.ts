@@ -194,6 +194,11 @@ function* initializeNewDashboard(
         call(loadLegacyDashboards, ctx),
     ]);
 
+    const initActions: SagaReturnType<typeof actionsToInitializeNewDashboard> = yield call(
+        actionsToInitializeNewDashboard,
+        config.dateFilterConfig,
+    );
+
     const batch: BatchAction = batchActions(
         [
             backendCapabilitiesActions.setBackendCapabilities(backend.capabilities),
@@ -210,7 +215,7 @@ function* initializeNewDashboard(
             accessibleDashboardsActions.setAccessibleDashboards(accessibleDashboards),
             legacyDashboardsActions.setLegacyDashboards(legacyDashboards),
             executionResultsActions.clearAllExecutionResults(),
-            ...actionsToInitializeNewDashboard(config.dateFilterConfig),
+            ...initActions,
             dateFilterConfigActions.setDateFilterConfig({
                 dateFilterConfig: undefined,
                 effectiveDateFilterConfig: config.dateFilterConfig,
